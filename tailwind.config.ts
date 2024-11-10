@@ -11,9 +11,16 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'cart-green': '#0C831F',
+        'location-bg': '#F4F7FD',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
+  daisyui: {
+    themes: ["light"],
+  },
 };
 export default config;
