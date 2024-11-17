@@ -25,38 +25,41 @@ const Location = () => {
     }
   };
 
-  const detectLocation = () => {
+  const detectLocationGPS = () => {
     navigator.geolocation.getCurrentPosition((loc) => {
-      console.log(loc);
       const lat = loc.coords.longitude;
       const lng = loc.coords.latitude;
-      console.log(lat);
-      console.log(lng);
+      convertCordinatesToPlaceName(lat, lng);
+      getClosestStore(lat, lng);
 
-      convertCordinates(lat, lng);
     }, (err) => {
       console.log("Error in geolocation", err);
     })
   }
 
-  const convertCordinates = async (lat:number, lng: number) => {
+  const convertCordinatesToPlaceName = async (lat:number, lng: number) => {
     const data = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lat},${lng}.json?types=address&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
     const res = await data.json();
     const loc = res.features[0].place_name;
     setLocation(loc);
-    console.log(loc);
-    console.log(res);
   }
   
+  const getClosestStore = async (lat: number, lng: number) => {
+    const res = await fetch('/api/getClosestStore', {
+      method: 'POST',
+    });
+
+    if(!res.ok) {
+      throw new Error('Error fetching closest store to user');
+    }
+    
+    const data = await res.json();    
+  }
 
   const retrieveVal = (res:any) => {
-    console.log("retrive", res);
     const loc = res.features[0].properties.name;
     setLocation(loc);
     cordinates = res.features[0].geometry.coordinates;
-    console.log("val", location)
-    console.log("val", cordinates)
-
   } 
   
 
@@ -77,7 +80,7 @@ const Location = () => {
                 <div className="w-full">
                   <h3 className="font-normal text-base mb-5">Change Location</h3>
                   <div className="w-11/12 mb-2 flex justify-between items-center float-left">
-                    <button className='btn bg-cart-green text-white hover:bg-cart-green rounded-none' onClick={detectLocation}> 
+                    <button className='btn bg-cart-green text-white hover:bg-cart-green rounded-none' onClick={detectLocationGPS}> 
                       Detect my location
                     </button>
                     <p>OR</p>
