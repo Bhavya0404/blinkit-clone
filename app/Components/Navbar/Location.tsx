@@ -7,6 +7,7 @@ const Location = () => {
   const [isClient, setIsClient] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [location, setLocation] = useState('');
+  const [timeToDeliver, setTimeToDeliver] = useState(0);
 
   let cordinates: any;
 
@@ -47,13 +48,29 @@ const Location = () => {
   const getClosestStore = async (lat: number, lng: number) => {
     const res = await fetch('/api/getClosestStore', {
       method: 'POST',
-    });
-
-    if(!res.ok) {
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ lat:28.6388 , lng: 77.0871 }), // Send lat and lng in the request body
+    })
+    if(res.ok){
+      const data = await res.json();
+      getTimeToDelivery(data.latitude, data.longitude, 28.6388, 77.0871);
+      console.log(data);
+    } else{
       throw new Error('Error fetching closest store to user');
-    }
-    
-    const data = await res.json();    
+    }        
+  }
+
+  const getTimeToDelivery = async (storeLat: number, storeLng: number, userLat: number, userLng: number) => {
+    console.log(storeLat, storeLng);
+    const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${storeLng},${storeLat};${userLng},${userLat}?language=en&overview=full&steps=true&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
+    // const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/cycling/${storeLat},${storeLng},${userLat},${userLng}?alternatives=true&geometries=geojson&language=en&overview=full&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
+
+    const res = await data.json();
+    const duration = Math.ceil(res.routes[0].duration / 60);
+    setTimeToDeliver(duration);
+    console.log("API CALL", res);
   }
 
   const retrieveVal = (res:any) => {
@@ -65,7 +82,7 @@ const Location = () => {
 
   return (
     <div className="hover:cursor-pointer" onClick={openModal}>
-      <p className="font-extrabold text-lg">Delivery in 8 minutes</p>
+      <p className="font-extrabold text-lg">Delivery in {timeToDeliver} minutes</p>
       <p className="font-normal text-sm">{location}</p>
 
       {isClient && (
