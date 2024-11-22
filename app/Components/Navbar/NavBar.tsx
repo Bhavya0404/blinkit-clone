@@ -2,7 +2,8 @@ import React from 'react'
 import SearchBox from './SearchBox'
 import Login from './Login'
 import Cart from './Cart'
-import Location from './Location'
+import dynamic from 'next/dynamic'
+const Location = dynamic(() => import('./Location'), {ssr: false});
 
 const NavBar = () => {
   return (

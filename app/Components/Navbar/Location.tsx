@@ -7,7 +7,7 @@ const Location = () => {
   const [isClient, setIsClient] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [location, setLocation] = useState('');
-  const [timeToDeliver, setTimeToDeliver] = useState(0);
+  const [timeToDeliver, setTimeToDeliver] = useState(10);
 
   let cordinates: any;
 
@@ -65,8 +65,6 @@ const Location = () => {
   const getTimeToDelivery = async (storeLat: number, storeLng: number, userLat: number, userLng: number) => {
     console.log(storeLat, storeLng);
     const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${storeLng},${storeLat};${userLng},${userLat}?language=en&overview=full&steps=true&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
-    // const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/cycling/${storeLat},${storeLng},${userLat},${userLng}?alternatives=true&geometries=geojson&language=en&overview=full&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
-
     const res = await data.json();
     const duration = Math.ceil(res.routes[0].duration / 60);
     setTimeToDeliver(duration);
