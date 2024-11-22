@@ -63,38 +63,36 @@ const Location = () => {
   }
 
   const getTimeToDelivery = async (storeLat: number, storeLng: number, userLat: number, userLng: number) => {
-    console.log(storeLat, storeLng);
     const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${storeLng},${storeLat};${userLng},${userLat}?language=en&overview=full&steps=true&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
     const res = await data.json();
     const duration = Math.ceil(res.routes[0].duration / 60);
     setTimeToDeliver(duration);
-    console.log("API CALL", res);
   }
 
   const retrieveVal = (res:any) => {
-    const loc = res.features[0].properties.name;
+    cordinates = res.features[0].properties.coordinates;
+    const loc = res.features[0].properties.full_address;
     setLocation(loc);
-    cordinates = res.features[0].geometry.coordinates;
+    getClosestStore(cordinates.latitude, cordinates.longitude);
   } 
   
 
   return (
-    <div className="hover:cursor-pointer" onClick={openModal}>
+    <div className="hover:cursor-pointer w-64 m-2 content-center" onClick={openModal}>
       <p className="font-extrabold text-lg">Delivery in {timeToDeliver} minutes</p>
-      <p className="font-normal text-sm">{location}</p>
+      <p className="font-normal text-sm overflow-hidden text-ellipsis whitespace-nowrap">{location}</p>
 
       {isClient && (
         <dialog id="my_modal" className="modal">
-          <div className="modal-box bg-location-bg rounded-none">
+          <div className="modal-box bg-location-bg rounded-none overflow-hidden h-80">
                 <form method="dialog">
-                    {/* The button within the form closes the modal automatically */}
                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                         ✕
                     </button>
                 </form>
                 <div className="w-full">
                   <h3 className="font-normal text-base mb-5">Change Location</h3>
-                  <div className="w-11/12 mb-2 flex justify-between items-center float-left">
+                  <div className="w-full mb-2 flex justify-between items-center float-left">
                     <button className='btn bg-cart-green text-white hover:bg-cart-green rounded-none' onClick={detectLocationGPS}> 
                       Detect my location
                     </button>
