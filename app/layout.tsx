@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import NavBar from "./Components/Navbar/NavBar";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,10 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme>
-      <body>
-        <NavBar />
-        {children}
-      </body>
+      <UserProvider>
+        <body>
+          <NavBar />
+          {children}
+        </body>
+      </UserProvider>
     </html>
   );
 }
