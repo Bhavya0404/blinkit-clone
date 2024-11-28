@@ -11,6 +11,7 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
     "@mapbox/search-js-react": "^1.0.0-beta.22",
+    "firebase": "^11.0.2",
     "next": "14.2.15",
     "pg": "^8.13.1",
     "react": "^18",
