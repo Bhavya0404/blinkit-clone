@@ -20,7 +20,7 @@ const Login =  () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier>();
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [otpScreen, setOtpscreen] = useState(false);
 
@@ -41,9 +41,9 @@ const Login =  () => {
 
     setRecaptchaVerifier(recaptchaVerifier);
 
-    return () => {
-      recaptchaVerifier.clear();
-    }
+    // return () => {
+    //   recaptchaVerifier.clear();
+    // }
   }, [auth])
 
   const requestOTP = async (e?: FormEvent<HTMLFormElement>) => {
@@ -51,6 +51,9 @@ const Login =  () => {
     setResendCountdown(60);
 
     try {
+      if(!recaptchaVerifier){
+        throw setError("recaptcha error");
+      }
       const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
       setConfirmationResult(confirmationResult);
     } catch (err){
@@ -95,7 +98,7 @@ const Login =  () => {
                 <div className='h-28 flex flex-col justify-around'>
                   <label className="input input-bordered flex items-center gap-4">
                     <p className='font-medium'>+91</p>
-                    <input type="number" className="grow"value={phoneNumber} onChange={(e)=> setPhoneNumber(e.target.value)} placeholder="Enter mobile number" />
+                    <input type="text" className="grow"value={phoneNumber} onChange={(e)=> setPhoneNumber(e.target.value)} placeholder="Enter mobile number" />
                   </label>
 
                   <button className="btn btn-wide"  >Continue</button>
