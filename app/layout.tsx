@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import NavBar from "./Components/Navbar/NavBar";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
+import LandingPage from "./Components/Landing-Page/LandingPage";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

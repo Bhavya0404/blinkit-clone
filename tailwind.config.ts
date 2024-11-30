@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -13,6 +14,7 @@ const config: Config = {
         foreground: "var(--foreground)",
         'cart-green': '#0C831F',
         'location-bg': '#F4F7FD',
+        'white-bg': 'url("https://cdn.grofers.com/layout-engine/2021-10/white-bg-1.png")'
       },
     },
   },
