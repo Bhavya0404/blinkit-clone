@@ -1,39 +1,20 @@
-const fs = require('fs');
-const pg = require('pg');
-const url = require('url');
+const {Pool} = require('pg');
 
-const config = {
-    user: "avnadmin",
-    password: process.env.NEXT_PUBLIC_AIVEN_PASS,
-    host: "pg-12bafbcc-blinkit-clone.i.aivencloud.com",
-    port: 27239,
-    database: "dark_stores",
-    ssl: {
-        rejectUnauthorized: true,
-        ca: fs.readFileSync('./ca.pem').toString(),
-    },
-};
+const pool = new Pool({
+    host: 'localhost',
+    user: process.env.NEXT_PSQL_USER,
+    port: 5432,
+    password: process.env.NEXT_PSQL_PASS,
+    database: 'blinkit',
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+})
 
 export default async function findNearestDarkStore(req, res) {
     // if (req.method === 'POST') {
         const {lat,lng} = req.body;
         console.log("HI",lat, lng);
-        const client = new pg.Client(config);
-        await client.connect((err) => {
-            if (err)
-                throw err;
-        
-            client.query("SELECT VERSION()", [], (err, result) => {
-                if (err)
-                    throw err;
-        
-                // console.log(result.rows[0].version);
-                client.end( (err) => {
-                    if (err)
-                        throw err;
-                });
-            });
-        });
         const query = `-- Define the user's location and create a hexagon around it
         WITH user_location AS (
             SELECT ST_SetSRID(ST_MakePoint($1, $2), 4326) AS location
@@ -69,8 +50,7 @@ export default async function findNearestDarkStore(req, res) {
             distance_in_meters ASC
         LIMIT 1`
         
-        const result =  await client.query(query, [lng, lat]);
-        console.log('Rows in dark_store', result);
+        const result =  await pool.query(query, [lng, lat]);
         res.status(200).json(result.rows[0]);
     // }
     
