@@ -1,15 +1,4 @@
-const {Pool} = require('pg');
-
-const pool = new Pool({
-    host: 'localhost',
-    user: process.env.NEXT_PSQL_USER,
-    port: 5432,
-    password: process.env.NEXT_PSQL_PASS,
-    database: 'blinkit',
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
-})
+const pool = require('@/app/database/postgres')
 
 export default async function findNearestDarkStore(req, res) {
     // if (req.method === 'POST') {

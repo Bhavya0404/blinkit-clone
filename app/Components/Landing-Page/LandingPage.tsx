@@ -1,5 +1,6 @@
+"use client"
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import landingPageData from '../../../public/data/landingPage'
 import Product from '../Product/Product';
 
@@ -7,7 +8,27 @@ const topData = landingPageData.topData;
 const midData = landingPageData.midData;
 const categoriesData = landingPageData.categoriesData;
 
-const LandingPage = () => {
+interface Category {
+    id: number;
+    name: string;
+}
+
+const LandingPage = () => { 
+    const [category, setCategory] = useState<Category[]>([]);
+    
+    const getCategory = async () => {
+        const res = await fetch('/api/category');
+          if(res.ok){
+            const data = await res.json();
+            setCategory(data);
+          } else{
+            throw new Error('Error fetching category');
+          }  
+    }
+
+    useEffect(() => {
+        getCategory();
+    }, [])
   return (
     <div className='w-8/12 h-full m-auto flex flex-col align-middle overflow-hidden'>
         <div>
@@ -35,6 +56,13 @@ const LandingPage = () => {
                     )
                 })}
             </div>
+        </div>
+        <div>
+            {category.map((res)=> {
+                return (
+                    <p>{res.name}</p>
+                )
+            })}
         </div>
         <Product />
     </div>

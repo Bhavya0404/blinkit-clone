@@ -1,4 +1,4 @@
-const { Pool } = require("pg");
+const {Pool} = require('pg');
 
 const pool = new Pool({
     host: 'localhost',
@@ -11,9 +11,4 @@ const pool = new Pool({
     connectionTimeoutMillis: 2000,
 })
 
-async function Test(params) {
-    const temp = await pool.query('select * from stores');
-    console.log(temp);
-}
-Test();
-// console.log(result);
+module.exports = pool;
