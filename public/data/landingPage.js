@@ -8,52 +8,52 @@ const landingPageData = {
         {
             id: 2,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-2_10.png",
-            alt: "Paan-corner"
+            alt: "Dairy, Bread & Eggs"
         },
         {
             id: 3,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-3_9.png",
-            alt: "Paan-corner"
+            alt: "Fruits & Vegetables"
         },
         {
             id: 4,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-4_9.png",
-            alt: "Paan-corner"
+            alt: "Cold Drinks & Juices"
         },
         {
             id: 5,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-5_4.png",
-            alt: "Paan-corner"
+            alt: "Snacks"
         },
         {
             id: 6,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-6_5.png",
-            alt: "Paan-corner"
+            alt: "Breakfast & Instant Food"
         },
         {
             id: 7,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-7_3.png",
-            alt: "Paan-corner"
+            alt: "Sweet Tooth"
         },
         {
             id: 8,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-8_4.png",
-            alt: "Paan-corner"
+            alt: "Bakery & Biscuits"
         },
         {
             id: 9,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-9_3.png",
-            alt: "Paan-corner"
+            alt: "Tea, Coffee & Health Drink"
         },
         {
             id: 10,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-10.png",
-            alt: "atta-rice"
+            alt: "Atta, Rice & Dal"
         },
         {
             id: 11,
             img: "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-11.png",
-            alt: "Paan-corner"
+            alt: "Masala, Oil & More"
         },
         {
             id: 12,
