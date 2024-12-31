@@ -73,43 +73,43 @@ const ProductsPage = () => {
     const displayedCategories = category.slice(0, 7);
   return (
     <div>
-        <div className="navbar bg-base-100 min-h-12" style={{ boxShadow: '0 1px 6px rgba(0, 0, 0, 0.1)' }}>
-            <div className='w-8/12 h-full m-auto'>
-                <nav className='w-full flex justify-between'>
-                    {displayedCategories.map((res)=> {
-                        return (
-                            <li key={res.id} className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
-                        )
-                    })}
+        <div className="navbar bg-base-100 min-h-12 p-0" style={{ boxShadow: '0 1px 6px rgba(0, 0, 0, 0.1)' }}>
+            <div className='w-8/12 h-full m-auto my-0'>
+            <nav className='h-12 w-full flex justify-between items-center'>
+                {displayedCategories.map((res)=> {
+                return (
+                    <li key={res.id} className='list-none hover:bg-gray-100 h-full w-44'><a href="" className='h-full flex items-center justify-center whitespace-normal text-center'>{res.name}</a></li>
+                )
+                })}
 
-                    <li className='list-none'>
-                        <div className="dropdown dropdown-bottom dropdown-end">
-                            <div tabIndex={0} role="button" className="m-1">More </div>
-                            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                            {category.map((res)=> {
-                                return (
-                                    <li key={res.id} className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
-                                )
-                            })}
-                            </ul>
-                        </div>
-                    </li>
-                </nav>
+                <li className='list-none hover:bg-gray-100 hover:cursor-pointer h-full w-11'>
+                <div className="dropdown dropdown-bottom dropdown-end h-12">
+                    <div tabIndex={0} role="button" className='h-full flex items-center justify-center'>More </div>
+                    <ul tabIndex={0} className="dropdown-content menu bg-base-100 p-0 z-[1] w-52 shadow rounded-none">
+                    {category.map((res)=> {
+                    return (
+                        <li key={res.id} className='list-none border-b border-gray-200 p-2 hover:bg-gray-100'><a href="" className='block whitespace-normal text-left hover:bg-transparent'>{res.name}</a></li>
+                    )
+                    })}
+                    </ul>
+                </div>
+                </li>
+            </nav>
             </div>
         </div>
 
-        <div className='w-8/12 h-full m-auto mt-4 flex'>
-            <div>
-                <ul className="menu bg-base-200 w-56">
+        <div className='w-8/12 h-full m-auto my-0 pt-1 flex'>
+            <div className='h-screen'>
+                <ul className="menu bg-base-100 w-60 p-0 overflow-y-auto">
                     {subcategory.map((res)=> {
-                        return (
-                            <li key={res.id} className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
-                        )
+                    return (
+                        <li key={res.id} className='list-none border-b border-x border-gray-200 last:border-b-0 p-3 hover:cursor-pointer hover:bg-green-hover'><a href="" className='block whitespace-normal text-left hover:bg-transparent'>{res.name}</a></li>
+                    )
                     })}
                 </ul>
             </div>
 
-            <div className='flex h-full overflow-x-hidden flex-wrap justify-start'>
+            <div className='flex h-full overflow-x-hidden flex-wrap bg-right-product-bg'>
                 {products.map((res)=> {
                     return (
                         <Product key={res.id} product={res} />
