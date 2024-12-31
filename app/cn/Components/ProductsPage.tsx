@@ -7,59 +7,68 @@ interface Category {
     name: string;
 }
 
-interface Product {
+interface ProductType {
+    id: string;
     name: string;
     image_url: string;
-    secondary_images: any;
-    price: number;
-    discounted_price: number;
-    weight: number;
+    secondary_images: string[];
+    price: string;
+    discounted_price: string;
+    weight: string;
     subcategory_id: string;
     company: string;
-    additional_attributes: any;
+    additional_attributes: {
+        shelf_life: string;
+        storage_tips: string;
+        return_policy: string;
+        country_of_origin: string;
+        customer_care_details: string;
+    };
 }
 
 const ProductsPage = () => {
     const [category, setCategory] = useState<Category[]>([]);
     const [subcategory, setSubCategory] = useState<Category[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
+    const [products, setProducts] = useState<ProductType[]>([]);
     
-    const getCategory = async () => {
-        const res = await fetch('/api/category');
-          if(res.ok){
-            const data = await res.json();
-            setCategory(data);
-          } else{
-            throw new Error('Error fetching category');
-          }  
-    }
+    const fetchData = async () => {
+        try {
+            // setLoading(true);
+            const [categoryRes, subcategoryRes, productsRes] = await Promise.all([
+                fetch('/api/category'),
+                fetch('/api/subcategory'),
+                fetch('/api/getproducts')
+            ]);
 
-    const getSubCategory = async () => {
-        const res = await fetch('/api/subcategory');
-          if(res.ok){
-            const data = await res.json();
-            setSubCategory(data);
-          } else{
-            throw new Error('Error fetching category');
-          }  
-    }
+            if (categoryRes.ok && subcategoryRes.ok && productsRes.ok) {
+                const categoryData = await categoryRes.json();
+                const subcategoryData = await subcategoryRes.json();
+                const productsData = await productsRes.json();
 
-    const getProducts = async () => {
-        const res = await fetch('/api/getproducts');
-          if(res.ok){
-            const data = await res.json();
-            console.log(data);
-            setProducts(data);
-          } else{
-            throw new Error('Error fetching category');
-          }  
-    }
+                // const formattedProducts = productsData.map((res: ProductType) => ({
+                //     ...res,
+                //     secondary_images: JSON.parse(res.secondary_images || '[]'),
+                //     additional_attributes: JSON.parse(res.additional_attributes || '{}'),
+                // }));
+
+                setCategory(categoryData);
+                setSubCategory(subcategoryData);
+                setProducts(productsData);
+                // console.log("categoryData",categoryData);
+                // console.log("subcategoryData",subcategoryData);
+                console.log("productsData",productsData);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            // setLoading(false);
+        }
+    };
+
 
     useEffect(() => {
-        getCategory();
-        getSubCategory();
-        getProducts();
-    }, [])
+        fetchData();
+    }, []);
 
     const displayedCategories = category.slice(0, 7);
   return (
@@ -69,7 +78,7 @@ const ProductsPage = () => {
                 <nav className='w-full flex justify-between'>
                     {displayedCategories.map((res)=> {
                         return (
-                            <li className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
+                            <li key={res.id} className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
                         )
                     })}
 
@@ -79,7 +88,7 @@ const ProductsPage = () => {
                             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                             {category.map((res)=> {
                                 return (
-                                    <li className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
+                                    <li key={res.id} className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
                                 )
                             })}
                             </ul>
@@ -94,20 +103,18 @@ const ProductsPage = () => {
                 <ul className="menu bg-base-200 w-56">
                     {subcategory.map((res)=> {
                         return (
-                            <li className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
+                            <li key={res.id} className='list-none'><a href="" className='block whitespace-normal text-center'>{res.name}</a></li>
                         )
                     })}
                 </ul>
             </div>
 
             <div className='flex h-full overflow-x-hidden flex-wrap justify-start'>
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
+                {products.map((res)=> {
+                    return (
+                        <Product key={res.id} product={res} />
+                    )
+                })}
             </div>
         </div>
     </div>
