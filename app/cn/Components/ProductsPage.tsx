@@ -1,5 +1,6 @@
 "use client"
 import Product from '@/app/Components/Product/Product';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import React, { useEffect, useState } from 'react'
 
 interface Category {
@@ -27,6 +28,7 @@ interface ProductType {
 }
 
 const ProductsPage = () => {
+    const {user, isLoading: authLoading} = useUser();
     const [category, setCategory] = useState<Category[]>([]);
     const [subcategory, setSubCategory] = useState<Category[]>([]);
     const [products, setProducts] = useState<ProductType[]>([]);
@@ -67,8 +69,9 @@ const ProductsPage = () => {
 
 
     useEffect(() => {
+        if (authLoading) return;
         fetchData();
-    }, []);
+    }, [authLoading]);
 
     const displayedCategories = category.slice(0, 7);
   return (
