@@ -64,7 +64,7 @@ const LandingPage = () => {
                 )
             })}
         </div>
-        <Product />
+        {/* <Product /> */}
     </div>
   )
 }

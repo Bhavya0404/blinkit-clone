@@ -20,6 +20,8 @@ const config: Config = {
         'add-button': 'rgb(49, 134, 22)',
         'card-box-shadow': 'rgba(0, 0, 0, 0.04) 2px 2px 8px',
         'card-bg': 'rgb(255, 255, 255)',
+        'green-hover': '#EBFFEF',
+        'right-product-bg': '#F5F7FB',
       },
     },
   },
