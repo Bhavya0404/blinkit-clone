@@ -25,6 +25,7 @@ interface ProductType {
         country_of_origin: string;
         customer_care_details: string;
     };
+    outOfStock: boolean;
 }
 
 const ProductsPage = () => {
@@ -58,7 +59,7 @@ const ProductsPage = () => {
                 setProducts(productsData);
                 // console.log("categoryData",categoryData);
                 // console.log("subcategoryData",subcategoryData);
-                console.log("productsData",productsData);
+                // console.log("productsData",productsData);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
