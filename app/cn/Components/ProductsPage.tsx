@@ -47,6 +47,7 @@ const ProductsPage = () => {
     const params = useSearchParams();
     const categoryId = params?.get('categoryId');
 
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -80,7 +81,14 @@ const ProductsPage = () => {
 
                 if(productRes.ok){
                     const productsData = await productRes.json();
-                    setProducts(productsData);
+                    const parsedProductsdata = productsData.map((res: any) => {
+                        return {
+                            ...res,
+                            secondary_images: JSON.parse(res.secondary_images),
+                            additional_attributes: JSON.parse(res.additional_attributes)
+                        };
+                    });
+                    setProducts(parsedProductsdata);
                 } else {
                     throw new Error('Error fetching products');
                 }
@@ -91,7 +99,6 @@ const ProductsPage = () => {
             setLoading(false);
         }
     };
-
 
     useEffect(() => {
         fetchData();
