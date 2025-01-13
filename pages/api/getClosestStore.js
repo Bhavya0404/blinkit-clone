@@ -3,7 +3,6 @@ const pool = require('@/app/database/postgres')
 export default async function findNearestDarkStore(req, res) {
     // if (req.method === 'POST') {
         const {lat,lng} = req.body;
-        console.log("HI",lat, lng);
         const query = `-- Define the user's location and create a hexagon around it
         WITH user_location AS (
             SELECT ST_SetSRID(ST_MakePoint($1, $2), 4326) AS location

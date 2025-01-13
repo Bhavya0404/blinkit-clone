@@ -16,13 +16,13 @@ export default async function getCategory(req, res) {
         const pipeline = redis.pipeline();
         
         categoryIds.forEach(id => {
-            pipeline.hget(`category:${id}`, 'name');
+            pipeline.hgetall(`category:${id}`);
         });
 
         const results = await pipeline.exec();
-        const categories = results.map(([err, name], index) => {
+        const categories = results.map(([err, data], index) => {
             if (err) throw err;
-            return { id: categoryIds[index], name };
+            return data;
         });
 
         // Store in cache

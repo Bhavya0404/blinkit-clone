@@ -23,7 +23,6 @@ interface ProductType {
 }
 
 const Product = ({ product }: { product: ProductType }) => {
-    // console.log("product",product);
   return (
     <div className="items-center w-[180px] pb-3 border shadow-card-box-shadow shadow bg-card-bg rounded-lg m-3">
         <div className='flex justify-center'>

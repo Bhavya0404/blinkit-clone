@@ -8,14 +8,15 @@ const CACHE_KEY = 'cached:products';
 const CACHE_TTL = 3600;
 
 export default async function getProducts(req, res) {
+  const { subCategoryId } = req.body;
   const storeId = 3;
     try {
-        const cachedProducts = await redis.get(CACHE_KEY);
-        if (cachedProducts) {
-            return res.status(200).json(JSON.parse(cachedProducts));
-        }
+        // const cachedProducts = await redis.get(CACHE_KEY);
+        // if (cachedProducts) {
+        //     return res.status(200).json(JSON.parse(cachedProducts));
+        // }
         
-        const subCategoryId = 'd0e6c978-e5ee-49a7-8b8e-577af537ae57';
+        // const subCategoryId = 'd0e6c978-e5ee-49a7-8b8e-577af537ae57';
         const productIds = await redis.smembers(`subcategory:${subCategoryId}:products`);
         
         const pipeline = redis.pipeline();
@@ -31,7 +32,6 @@ export default async function getProducts(req, res) {
               else {
                 
                 const getStock = await redis.hget(`store:${storeId}:inventory:${data.id}`, 'current_quantity');
-                console.log(getStock);
                 if(getStock && getStock.current_quantity > 0){
                   data.outOfStock = false;
                 } else {
@@ -42,7 +42,6 @@ export default async function getProducts(req, res) {
             })
             .filter(Boolean));
 
-        console.log("check stock",productDetails);
         await redis.setex(CACHE_KEY, CACHE_TTL, JSON.stringify(productDetails));
         res.status(200).json(productDetails);
     } catch (error) {

@@ -4,13 +4,14 @@ const pool = require('../../app/database/postgres');
 const CACHE_KEY = 'cached:subcategories';
 
 export default async function getSubCategory(req, res) {
+    const { categoryId } = await req.body;
     try {
-        const cachedSubcategories = await redis.get(CACHE_KEY);
-        if (cachedSubcategories) {
-            return res.status(200).json(JSON.parse(cachedSubcategories));
-        }
+        // const cachedSubcategories = await redis.get(CACHE_KEY);
+        // if (cachedSubcategories) {
+        //     return res.status(200).json(JSON.parse(cachedSubcategories));
+        // }
 
-        const categoryId = '96066f86-9f17-4179-bb03-0708e72a7215';
+        // const categoryId = categoryId;
         const subcategories = await redis.zrange(
             `category-sub:${categoryId}:subcategories`,
             0,
@@ -18,7 +19,6 @@ export default async function getSubCategory(req, res) {
         );
         
         const parsedSubcategories = subcategories.map(sub => JSON.parse(sub));
-        
         // Set cache without expiration
         await redis.set(CACHE_KEY, JSON.stringify(parsedSubcategories));
         

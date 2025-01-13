@@ -1,9 +1,18 @@
 "use client"
 import Product from '@/app/Components/Product/Product';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 interface Category {
+    id: string;
+    name: string;
+    display_order: number;
+    is_active: boolean;
+    image_url: string;
+}
+
+interface SubCategory {
     id: number;
     name: string;
 }
@@ -29,50 +38,64 @@ interface ProductType {
 }
 
 const ProductsPage = () => {
-    const {user, isLoading: authLoading} = useUser();
+    // const {user, isLoading: authLoading} = useUser();
+    const [isLoading, setLoading] = useState(false);
     const [category, setCategory] = useState<Category[]>([]);
-    const [subcategory, setSubCategory] = useState<Category[]>([]);
+    const [subcategory, setSubCategory] = useState<SubCategory[]>([]);
+    const [currentSubcategory, setCurrentSubcategory] = useState<SubCategory>();
     const [products, setProducts] = useState<ProductType[]>([]);
-    
+    const params = useSearchParams();
+    const categoryId = params?.get('categoryId');
+
     const fetchData = async () => {
         try {
-            // setLoading(true);
-            const [categoryRes, subcategoryRes, productsRes] = await Promise.all([
+            setLoading(true);
+            const [categoryRes, subcategoryRes] = await Promise.all([
                 fetch('/api/category'),
-                fetch('/api/subcategory'),
-                fetch('/api/getproducts')
+                fetch(`/api/subcategory`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ categoryId: categoryId })
+                }),
+                
             ]);
 
-            if (categoryRes.ok && subcategoryRes.ok && productsRes.ok) {
+            if (categoryRes.ok && subcategoryRes.ok) {
                 const categoryData = await categoryRes.json();
                 const subcategoryData = await subcategoryRes.json();
-                const productsData = await productsRes.json();
-
-                // const formattedProducts = productsData.map((res: ProductType) => ({
-                //     ...res,
-                //     secondary_images: JSON.parse(res.secondary_images || '[]'),
-                //     additional_attributes: JSON.parse(res.additional_attributes || '{}'),
-                // }));
 
                 setCategory(categoryData);
                 setSubCategory(subcategoryData);
-                setProducts(productsData);
-                // console.log("categoryData",categoryData);
-                // console.log("subcategoryData",subcategoryData);
-                // console.log("productsData",productsData);
+                setCurrentSubcategory(subcategoryData[0])
+
+                const productRes = await fetch('/api/getproducts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ subCategoryId: subcategoryData[0]?.id })
+                })
+
+                if(productRes.ok){
+                    const productsData = await productRes.json();
+                    setProducts(productsData);
+                } else {
+                    throw new Error('Error fetching products');
+                }
             }
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
-            // setLoading(false);
+            setLoading(false);
         }
     };
 
 
     useEffect(() => {
-        if (authLoading) return;
         fetchData();
-    }, [authLoading]);
+    }, [categoryId]);
 
     const displayedCategories = category.slice(0, 7);
   return (
