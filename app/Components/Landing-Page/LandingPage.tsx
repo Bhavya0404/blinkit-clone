@@ -2,6 +2,8 @@ import Image from 'next/image'
 import landingPageData from '../../../public/data/landingPage'
 import Product from '../Product/Product';
 import Categories from '../Categories';
+import ProductCarousel from './ProductCarousel';
+import Footer from './Footer';
 
 const topData = landingPageData.topData;
 const midData = landingPageData.midData;
@@ -28,6 +30,16 @@ const LandingPage = () => {
 
         <div>
             <Categories />
+        </div>
+
+        <div>
+            <ProductCarousel />
+            <ProductCarousel />
+            <ProductCarousel />
+        </div>
+
+        <div className='mt-7'>
+            <Footer />
         </div>
     </div>
   )
