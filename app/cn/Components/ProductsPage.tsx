@@ -13,7 +13,7 @@ interface Category {
 }
 
 interface SubCategory {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -44,10 +44,13 @@ const ProductsPage = () => {
     const [subcategory, setSubCategory] = useState<SubCategory[]>([]);
     const [currentSubcategory, setCurrentSubcategory] = useState<SubCategory>();
     const [products, setProducts] = useState<ProductType[]>([]);
+    const [selectedTab, setSelectedTab] = useState('');
     const params = useSearchParams();
     const categoryId = params?.get('categoryId');
 
-
+    const handleLeftPanel = (subcategoryId: string) => {
+        setSelectedTab(subcategoryId);
+    }   
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -70,28 +73,8 @@ const ProductsPage = () => {
                 setCategory(categoryData);
                 setSubCategory(subcategoryData);
                 setCurrentSubcategory(subcategoryData[0])
+                setSelectedTab(subcategoryData[0]?.id);
 
-                const productRes = await fetch('/api/getproducts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ subCategoryId: subcategoryData[0]?.id })
-                })
-
-                if(productRes.ok){
-                    const productsData = await productRes.json();
-                    const parsedProductsdata = productsData.map((res: any) => {
-                        return {
-                            ...res,
-                            secondary_images: JSON.parse(res.secondary_images),
-                            additional_attributes: JSON.parse(res.additional_attributes)
-                        };
-                    });
-                    setProducts(parsedProductsdata);
-                } else {
-                    throw new Error('Error fetching products');
-                }
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -100,9 +83,36 @@ const ProductsPage = () => {
         }
     };
 
+    const fetchProducts = async () => {
+        const productRes = await fetch('/api/getproducts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subCategoryId: selectedTab })
+        })
+
+        if(productRes.ok){
+            const productsData = await productRes.json();
+            const parsedProductsdata = productsData.map((res: any) => {
+                return {
+                    ...res,
+                    secondary_images: JSON.parse(res.secondary_images),
+                    additional_attributes: JSON.parse(res.additional_attributes)
+                };
+            });
+            setProducts(parsedProductsdata);
+        } else {
+            throw new Error('Error fetching products');
+        }
+    }
     useEffect(() => {
         fetchData();
     }, [categoryId]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [selectedTab])
 
     const displayedCategories = category.slice(0, 7);
   return (
@@ -134,10 +144,17 @@ const ProductsPage = () => {
 
         <div className='w-8/12 h-full m-auto my-0 pt-1 flex'>
             <div className='h-screen'>
-                <ul className="menu bg-base-100 w-60 p-0 overflow-y-auto">
+                <ul className="w-60 overflow-y-auto">
                     {subcategory.map((res)=> {
+                        const isSelected = selectedTab === res.id;
                     return (
-                        <li key={res.id} className='list-none border-b border-x border-gray-200 last:border-b-0 p-3 hover:cursor-pointer hover:bg-green-hover'><a href="" className='block whitespace-normal text-left hover:bg-transparent'>{res.name}</a></li>
+                        <li key={res.id} className={`
+                            flex items-center min-h-[4rem] text-sm leading-5 
+                            border-b border-x border-gray-200 
+                            last:border-b-0 p-3 hover:cursor-pointer
+                             hover:bg-green-hover ${isSelected ? 'bg-green-hover border-l-green-800 border-l-4' : 'hover:bg-green-hover'}
+                            `}
+                        onClick={() => handleLeftPanel(res.id)}><a href="#" className='block whitespace-normal text-left hover:bg-transparent'>{res.name}</a></li>
                     )
                     })}
                 </ul>
