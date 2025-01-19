@@ -1,7 +1,9 @@
 "use client"
 import Product from '@/app/Components/Product/Product';
+import ProductsPage from '@/app/Components/Product/ProductsPage';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import router from 'next/router';
 import React, { useEffect, useState } from 'react'
 
 interface Category {
@@ -37,7 +39,7 @@ interface ProductType {
     outOfStock: boolean;
 }
 
-const ProductsPage = () => {
+const ProductsListing = () => {
     // const {user, isLoading: authLoading} = useUser();
     const [isLoading, setLoading] = useState(false);
     const [category, setCategory] = useState<Category[]>([]);
@@ -48,9 +50,12 @@ const ProductsPage = () => {
     const params = useSearchParams();
     const categoryId = params?.get('categoryId');
 
+    const router = useRouter();
+
     const handleLeftPanel = (subcategoryId: string) => {
         setSelectedTab(subcategoryId);
     }   
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -163,7 +168,7 @@ const ProductsPage = () => {
             <div className='flex h-full overflow-x-hidden flex-wrap bg-right-product-bg'>
                 {products.map((res)=> {
                     return (
-                        <Product key={res.id} product={res} />
+                        <Product key={res.id} product={res}/>
                     )
                 })}
             </div>
@@ -172,4 +177,4 @@ const ProductsPage = () => {
   )
 }
 
-export default ProductsPage
+export default ProductsListing

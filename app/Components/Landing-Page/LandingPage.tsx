@@ -39,7 +39,7 @@ const LandingPage = () => {
         </div>
 
         <div className='mt-7'>
-            <Footer />
+            {/* <Footer /> */}
         </div>
     </div>
   )

@@ -22,7 +22,12 @@ interface ProductType {
 
 }
 
-const Product = ({ product }: { product: ProductType }) => {
+interface ProductProps {
+    product: ProductType;
+    onClick?: (product: ProductType) => void;
+}
+
+const Product = ({ product }: {product: ProductType}) => {
   return (
     <div className="items-center w-[180px] pb-3 border shadow-card-box-shadow shadow bg-card-bg rounded-lg m-3">
         <div className='flex justify-center'>
