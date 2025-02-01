@@ -1,50 +1,16 @@
 "use client"
-import Product from '@/app/Components/Product/Product';
-import ProductsPage from '@/app/Components/Product/ProductsPage';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import Product from '@/app/product/Components/Product';
+import { BasicDetails, Category, ProductType } from '@/app/types/interfaces';
 import { useRouter, useSearchParams } from 'next/navigation';
-import router from 'next/router';
 import React, { useEffect, useState } from 'react'
 
-interface Category {
-    id: string;
-    name: string;
-    display_order: number;
-    is_active: boolean;
-    image_url: string;
-}
-
-interface SubCategory {
-    id: string;
-    name: string;
-}
-
-interface ProductType {
-    id: string;
-    name: string;
-    image_url: string;
-    secondary_images: string[];
-    price: string;
-    discounted_price: string;
-    weight: string;
-    subcategory_id: string;
-    company: string;
-    additional_attributes: {
-        shelf_life: string;
-        storage_tips: string;
-        return_policy: string;
-        country_of_origin: string;
-        customer_care_details: string;
-    };
-    outOfStock: boolean;
-}
 
 const ProductsListing = () => {
     // const {user, isLoading: authLoading} = useUser();
     const [isLoading, setLoading] = useState(false);
     const [category, setCategory] = useState<Category[]>([]);
-    const [subcategory, setSubCategory] = useState<SubCategory[]>([]);
-    const [currentSubcategory, setCurrentSubcategory] = useState<SubCategory>();
+    const [subcategory, setSubCategory] = useState<BasicDetails[]>([]);
+    const [currentSubcategory, setCurrentSubcategory] = useState<BasicDetails>();
     const [products, setProducts] = useState<ProductType[]>([]);
     const [selectedTab, setSelectedTab] = useState('');
     const params = useSearchParams();

@@ -2,14 +2,8 @@
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
+import { Category } from '../types/interfaces';
 
-interface Category {
-    id: string;
-    name: string;
-    display_order: number;
-    is_active: boolean;
-    image_url: string;
-}
 
 const Categories = () => {
     const [category, setCategory] = useState<Category[]>([]);

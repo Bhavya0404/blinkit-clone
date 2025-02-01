@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import landingPageData from '../../../public/data/landingPage'
-import Product from '../Product/Product';
+import Product from '../../product/Components/Product';
 import Categories from '../Categories';
 import ProductCarousel from './ProductCarousel';
 import Footer from './Footer';
