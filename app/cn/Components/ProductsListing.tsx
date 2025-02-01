@@ -1,9 +1,6 @@
 "use client"
-import Product from '@/app/Components/Product/Product';
-import ProductsPage from '@/app/Components/Product/ProductsPage';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import Product from '@/app/product/Components/Product';
 import { useRouter, useSearchParams } from 'next/navigation';
-import router from 'next/router';
 import React, { useEffect, useState } from 'react'
 
 interface Category {
