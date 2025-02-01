@@ -3,36 +3,33 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import Carousel from './Carousel';
 import { ProductType } from '@/app/types/interfaces';
+import { useSearchParams } from 'next/navigation';
 
 const ProductsPage = () => {
-    const [products, setProducts] = useState<ProductType[]>([]);
+    const [productsDetails, setProductsDetails] = useState<ProductType>();
+    const params = useSearchParams();
+    const productId = params?.get('productId');
 
-    const fetchProducts = async () => {
-        const productRes = await fetch('/api/getproducts', {
+    const fetchProductDetails = async () => {
+        const res = await fetch('/api/productdetails', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ subCategoryId: 'd0e6c978-e5ee-49a7-8b8e-577af537ae57' })
+            body: JSON.stringify({ productId: productId })
         })
-
-        if(productRes.ok){
-            const productsData = await productRes.json();
-            const parsedProductsdata = productsData.map((res: any) => {
-                return {
-                    ...res,
-                    secondary_images: JSON.parse(res.secondary_images),
-                    additional_attributes: JSON.parse(res.additional_attributes)
-                };
-            });
-            setProducts(parsedProductsdata);
+        if(res.ok){
+            const data = await res.json();
+            setProductsDetails(data);
+            
         } else {
-            throw new Error('Error fetching products');
+            throw new Error('Error fetching product details');
         }
+        
     }
     
     useEffect(() => {
-        fetchProducts();
+        fetchProductDetails();
     }, [])
   return (
     <div className='w-9/12 m-auto mb-10 flex align-middle overflow-hidden'>
@@ -40,7 +37,7 @@ const ProductsPage = () => {
             <div className='flex flex-col'>
                 <div className='h-2/4 border-b mt-7'>
                     <div className='flex justify-center items-center'>
-                        <Image src={"https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/assets/products/sliding_images/jpeg/3ddcf321-04e9-4145-826f-553339b01ea2.jpg?ts=1727417441"} loading='lazy' width={460} height={400} alt={"Name"}/>
+                        <Image src={productsDetails?.image_url || ''} loading='lazy' width={460} height={400} alt={"Name"}/>
                     </div>
                     <div>
                         <Carousel />
@@ -57,13 +54,26 @@ const ProductsPage = () => {
                     <p className='text-gray-500'>Wholesome taste
                         Healthy and nutritious milk
                         Rich in calcium</p>
-                    <h3 className='font-semibold mt-3'>Return Policy</h3>
-                    <p className='text-gray-500'>The product is non-returnable. For a damaged, defective, expired or incorrect item, you can request a replacement within 24 hours of delivery.
-                    In case of an incorrect item, you may raise a replacement or return request only if the item is sealed/ unopened/ unused and in original condition.</p>
+                    
+                    {productsDetails?.additional_attributes?.shelf_life ? <div>
+                        <h3 className='font-semibold mt-3'>Shelf Life</h3>
+                        <p className='text-gray-500'>{productsDetails?.additional_attributes?.shelf_life}</p>
+                    </div> : null}
 
-                    <h3 className='font-semibold mt-3'>Return Policy</h3>
-                    <p className='text-gray-500'>The product is non-returnable. For a damaged, defective, expired or incorrect item, you can request a replacement within 24 hours of delivery.
-                    In case of an incorrect item, you may raise a replacement or return request only if the item is sealed/ unopened/ unused and in original condition.</p>
+                    {productsDetails?.additional_attributes?.country_of_origin ? <div>
+                        <h3 className='font-semibold mt-3'>Country Of Origin</h3>
+                        <p className='text-gray-500'>{productsDetails?.additional_attributes?.country_of_origin}</p>
+                    </div> : null}
+
+                    {productsDetails?.additional_attributes?.customer_care_details ? <div>
+                        <h3 className='font-semibold mt-3'>Customer Care Details</h3>
+                        <p className='text-gray-500'>{productsDetails?.additional_attributes?.customer_care_details}</p>
+                    </div> : null}
+
+                    {productsDetails?.additional_attributes?.return_policy ? <div>
+                        <h3 className='font-semibold mt-3'>Return Policy</h3>
+                        <p className='text-gray-500'>{productsDetails?.additional_attributes?.return_policy}</p>
+                    </div> : null}
 
                     <h3 className='font-semibold mt-3'>Return Policy</h3>
                     <p className='text-gray-500'>The product is non-returnable. For a damaged, defective, expired or incorrect item, you can request a replacement within 24 hours of delivery.
@@ -74,7 +84,7 @@ const ProductsPage = () => {
         <div className='w-6/12 pt-16 pl-10'>
            
             <div className='border-b pb-3'>
-                <h1 className='font-semibold text-2xl'>Amul Taaza Toned Fresh Milk</h1>
+                <h1 className='font-semibold text-2xl'>{productsDetails?.name}</h1>
         
                 <div className='w-20 h-3.5 flex items-center bg-earliest-bg mt-3'>
                     <div className='m-auto'>
@@ -84,13 +94,13 @@ const ProductsPage = () => {
                     <p className='text font-semibold'>13 mins</p>
                 </div>
 
-                <p className='text-green-600 text-lg font-medium mt-3'>View all by Amul</p>
+                <p className='text-green-600 text-lg font-medium mt-3'>View all by {productsDetails?.company}</p>
             </div>
 
             <div className='flex justify-between pt-3'>
                 <div className='pt-3'>
-                    <p className='text-gray-500 font-medium text-sm'>450 ml</p>
-                    <p className='text-gray-500 font-medium text-base'>MRP <span className='font-semibold text-black'>₹33</span></p>
+                    <p className='text-gray-500 font-medium text-sm'>{productsDetails?.weight} ml</p>
+                    <p className='text-gray-500 font-medium text-base'>MRP <span className='font-semibold text-black'>₹{productsDetails?.price}</span></p>
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>
                 <div className='pt-3'>
