@@ -1,12 +1,6 @@
 "use client"
+import { Category } from '@/app/types/interfaces';
 import React, { useEffect, useState } from 'react'
-interface Category {
-    id: string;
-    name: string;
-    display_order: number;
-    is_active: boolean;
-    image_url: string;
-}
 
 const Footer = () => {
     const [category, setCategory] = useState<Category[]>([]);

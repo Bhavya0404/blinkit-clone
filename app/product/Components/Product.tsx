@@ -1,27 +1,8 @@
+import { ProductType } from '@/app/types/interfaces';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
-interface ProductType {
-    id: string;
-    name: string;
-    image_url: string;
-    secondary_images: string[];
-    price: string;
-    discounted_price: string;
-    weight: string;
-    subcategory_id: string;
-    company: string;
-    additional_attributes: {
-        shelf_life: string;
-        storage_tips: string;
-        return_policy: string;
-        country_of_origin: string;
-        customer_care_details: string;
-    };
-    outOfStock: boolean;
-
-}
 
 const Product = ({ product }: {product: ProductType}) => {
     const router = useRouter();
