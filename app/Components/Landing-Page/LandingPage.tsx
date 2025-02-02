@@ -11,11 +11,11 @@ const midData = landingPageData.midData;
 const LandingPage = () => { 
   return (
     <div className='flex flex-col items-center overflow-hidden'>
-        <div className='min-w-[1280px] h-[234px]'>
+        <div className='hidden lg:block lg:min-w-[1280px] lg:h-[234px] '>
             <Image src={topData.img} loading='lazy' width={1280} height={234} alt={topData.alt}/>
         </div>
         
-        <div className='w-[1280px] overflow-hidden'>
+        <div className='hidden lg:block lg:w-[1280px] overflow-hidden'>
             <div className='flex items-center gap-5 m-4'>
                 {midData.map((res) => {
                     return (
@@ -28,6 +28,7 @@ const LandingPage = () => {
         </div>
 
         <div>
+            <h3 className='lg:hidden font-bold ml-3 mt-4'>Shop by category</h3>
             <Categories />
         </div>
 
