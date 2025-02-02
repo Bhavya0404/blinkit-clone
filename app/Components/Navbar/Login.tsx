@@ -27,7 +27,7 @@ const Login =  () => {
         
             <Account firstName={firstName} lastName={lastName} /> :
           <div>
-            <p className="hover:cursor-pointer" onClick={openModal}><a href="/api/auth/login">Login</a></p>
+            <p className="hover:cursor-pointer text-lg" onClick={openModal}><a href="/api/auth/login">Login</a></p>
           </div>}
       </div>
   )

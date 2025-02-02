@@ -9,18 +9,17 @@ const topData = landingPageData.topData;
 const midData = landingPageData.midData;
 
 const LandingPage = () => { 
-
   return (
-    <div className='w-8/12 h-full m-auto flex flex-col align-middle overflow-hidden'>
-        <div>
+    <div className='flex flex-col items-center overflow-hidden'>
+        <div className='min-w-[1280px] h-[234px]'>
             <Image src={topData.img} loading='lazy' width={1280} height={234} alt={topData.alt}/>
         </div>
         
-        <div>
-            <div className='flex gap-x-5 m-5 grow'>
+        <div className='w-[1280px] overflow-hidden'>
+            <div className='flex items-center gap-5 m-4'>
                 {midData.map((res) => {
                     return (
-                        <div key={res.id}>
+                        <div key={res.id} className='h-[195px] w-[330px] shrink-0'>
                             <Image src={res.img} loading='lazy' width={330} height={195} alt={res.alt}/>
                         </div>
                     )
@@ -32,7 +31,7 @@ const LandingPage = () => {
             <Categories />
         </div>
 
-        <div>
+        <div className='w-[1280px]'>
             <ProductCarousel />
             <ProductCarousel />
             <ProductCarousel />
