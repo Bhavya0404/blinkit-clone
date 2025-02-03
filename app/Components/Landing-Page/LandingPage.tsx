@@ -32,7 +32,7 @@ const LandingPage = () => {
             <Categories />
         </div>
 
-        <div className='w-[1280px]'>
+        <div className='w-[1280px] md:w-full lg:w-[1280px]'>
             <ProductCarousel />
             <ProductCarousel />
             <ProductCarousel />
