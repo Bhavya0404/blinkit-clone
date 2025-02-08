@@ -8,9 +8,26 @@ interface NumberModalProps {
 
 const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
   const [number, setNumber] = useState('');
+  const [userOTP, setuserOTP] = useState('');
+  const [generatedOTP, setGeneratedOTP] = useState('');
+  const [isOtpScreen, setisOtpScreen] = useState(false);
 
-  const validateNumber = () => {
-    console.log(parseInt(number));
+  const validateNumber = async () => {
+    const num = parseInt(number);
+    console.log(num);
+
+    if(num !== 8745948789){
+      console.log("Invalid Number");
+    } else {
+      const res = await fetch(`/api/auth/send_sms`);
+      if(res.ok){
+        const authData = await res.json();
+        setGeneratedOTP(authData.otp);
+      } else {
+        throw new Error("Error recieving OTP");
+      }
+      setisOtpScreen(true);
+    }
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,12 +39,34 @@ const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
     }
   };
 
+  const handleOTPChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+
+    if (/^\d{0,4}$/.test(value)) {
+      setuserOTP(value);
+    }
+  };
+
+  const validateOTP = () => {
+    if(parseInt(userOTP) === parseInt(generatedOTP)){
+      console.log("auth success");
+    } else {
+      throw new Error("Error in Auth");
+    }
+
+  }
+
+  const stopEventProp = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  }
+
   const resetInput = () => {
     onClose();
     setNumber('');
   }
   return (
     <dialog id="login_modal" className="modal" open={isOpen}>
+          {!isOtpScreen ? 
             <div className="modal-box h-80">
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={resetInput}>✕</button>
@@ -41,13 +80,12 @@ const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
                   <p className='font-bold text-2xl'>India's last minute app</p>
                   <p className='font-medium text-center'>Log in or Sign up</p>
                 </div>
-                <form action="#">
+                <form action="#" onSubmit={stopEventProp}>
                   <div className='h-28 flex flex-col justify-around'>
                     <label className="input input-bordered flex items-center gap-4">
                       <p className='font-medium'>+91</p>
                       <input type="text" className="grow" inputMode="numeric"  value={number} placeholder="Enter mobile number" onChange={handleInputChange} />
                     </label>
-
                     <button className="btn btn-wide bg-add-button text-white" disabled={number.length !== 10}  onClick={validateNumber}>Continue</button>
                   </div>
                 </form>
@@ -55,8 +93,33 @@ const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
                   <p className='text-sm'>By continuing, you agree to our Terms of service & Privacy policy</p>
                 </div>
               </div>
+            </div>  : 
+
+            <div className="modal-box h-80">
+              <form method="dialog">
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={resetInput}>✕</button>
+              </form>
+              <div className='flex flex-col justify-between items-center h-full'>
+                <div>
+                  <p className='font-bold text-2xl text-center'>OTP Verification</p>
+                  <p className='font-medium text-center'>We have sent a verification code to</p>
+                  <p className='font-medium text-center'>+91-{number}</p>
+                </div>
+                <form action="#" onSubmit={stopEventProp}>
+                  <div className='h-28 flex flex-col justify-around'>
+                    <label className="input input-bordered flex items-center gap-4">
+                      <input type="text" className="grow" inputMode="numeric"  value={userOTP} placeholder="Enter 4 digit otp" onChange={handleOTPChange} />
+                    </label>
+                    <button className="btn btn-wide bg-add-button text-white" disabled={userOTP.length !== 4}  onClick={validateOTP}>Submit</button>
+                  </div>
+                </form>
+                <div>
+                  <p className='text-sm'>By continuing, you agree to our Terms of service & Privacy policy</p>
+                </div>
+              </div>
             </div>
-          </dialog>
+        } 
+    </dialog>
   )
 }
 
