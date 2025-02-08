@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Carousel from './Carousel';
 import { ProductType } from '@/app/types/interfaces';
 import { useSearchParams } from 'next/navigation';
+import AddToCart from './AddToCart';
 
 const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
@@ -104,7 +105,7 @@ const ProductsPage = () => {
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>
                 <div className='pt-3'>
-                    <button className='w-16 h-8 text-add-button border-solid border border-add-button rounded-md gap-0.5 cursor-pointer'>Add</button>
+                    <AddToCart />
                 </div>
             </div>
 

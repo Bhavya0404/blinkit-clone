@@ -2,6 +2,7 @@ import { ProductType } from '@/app/types/interfaces';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React from 'react'
+import AddToCart from './AddToCart';
 
 
 const Product = ({ product }: {product: ProductType}) => {
@@ -32,7 +33,7 @@ const Product = ({ product }: {product: ProductType}) => {
 
                 <div className='h-8 flex justify-between items-center'>
                     <p className='font-bold w-8 h-6'>₹{Number(product.price)}</p>
-                    <button className='w-16 h-8 text-add-button border-solid border border-add-button rounded-md gap-0.5 cursor-pointer'>Add</button>
+                    <AddToCart />
                 </div>
             </div>
         </div>
