@@ -30,7 +30,7 @@ export default function RootLayout({
         <body>
           <NavBar />
           {children}
-          <div className='w-8/12 h-full m-auto flex flex-col align-middle overflow-hidden'><Footer /></div>
+          <div className='lg:w-8/12 w-full h-full m-auto flex flex-col align-middle overflow-hidden'><Footer /></div>
           
         </body>
       </UserProvider>

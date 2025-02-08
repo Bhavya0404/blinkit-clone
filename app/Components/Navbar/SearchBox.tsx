@@ -2,7 +2,7 @@ import React from 'react'
 
 const SearchBox = () => {
   return (
-    <div className='w-3/5'>
+    <div className='w-full lg:w-3/5'>
         <label className="input input-bordered flex items-center gap-2">
             <svg
                 xmlns="http://www.w3.org/2000/svg"

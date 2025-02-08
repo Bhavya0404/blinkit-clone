@@ -62,8 +62,8 @@ const ProductCarousel = () => {
             <p className='font-bold text-2xl'>Dairy, Bread & Eggs</p>
             <p ><a href="#" className='text-green-700 font-medium text-xl'>see all</a></p>
         </div>
-        <div className="relative">
-            <div ref={scrollContainerRef}className="flex overflow-x-hidden scroll-smooth">
+        <div className="lg:relative">
+            <div ref={scrollContainerRef}className="flex overflow-x-scroll scrollbar-hidden mx-auto px-8 lg:overflow-x-hidden scroll-smooth">
                 {productsData.map((res)=> {
                     return (
                         <Product key={res.id} product={res} />
@@ -71,7 +71,7 @@ const ProductCarousel = () => {
                 })}
             </div>
             
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+            <div className="hidden absolute left-5 right-5 top-1/2 lg:flex -translate-y-1/2 transform justify-between">
                 <button 
                     onClick={() => scroll('left')} 
                     className="btn btn-circle">

@@ -18,65 +18,48 @@ const Footer = () => {
     useEffect(() => {
         getCategory();
     }, [])
-
-    const category1 = category.slice(0, 5);
-    const category2 = category.slice(6, 11);
-    const category3 = category.slice(12, 18);
-    const category4 = category.slice(15, 20);
-  return (
-    <div>
-        <footer className="footer bg-base-100 text-base-content p-10">
-            <nav>
-                <h6 className="footer-title">UserFul Links</h6>
+  
+    return (
+      <div>
+        <footer className="bg-base-100 text-base-content p-10 flex flex-col lg:flex-row lg:justify-between">
+          <div>
+            <h6 className="footer-title">Userful Links</h6>
+            <div className='flex justify-between lg:justify-start lg:gap-8'>
+                <nav className="flex flex-col space-y-2">
                 <a className="link link-hover">Branding</a>
                 <a className="link link-hover">Design</a>
                 <a className="link link-hover">Marketing</a>
                 <a className="link link-hover">Advertisement</a>
-            </nav>
-            <nav className='mt-8'>
-                <a className="link link-hover">About us</a>
-                <a className="link link-hover">Contact</a>
-                <a className="link link-hover">Jobs</a>
-                <a className="link link-hover">Press kit</a>
-            </nav>
-            <nav className='mt-8'>
-                <a className="link link-hover">Terms of use</a>
-                <a className="link link-hover">Privacy policy</a>
-                <a className="link link-hover">Cookie policy</a>
-            </nav>
+                </nav>
+                <nav className="flex flex-col space-y-2">
+                    <a className="link link-hover">About us</a>
+                    <a className="link link-hover">Contact</a>
+                    <a className="link link-hover">Jobs</a>
+                    <a className="link link-hover">Press kit</a>
+                </nav>
 
-            <nav>
-                <h6 className='footer-title'>Categories</h6>
-                {category1.map((res) => {
-                    return (
-                        <a key={res.id} className='link link-hover'>{res.name}</a>
-                    )
-                })}
-            </nav>
-            <nav className='mt-8'>
-                {category2.map((res) => {
-                    return (
-                        <a key={res.id} className='link link-hover'>{res.name}</a>
-                    )
-                })}
-            </nav>
-            <nav className='mt-8'>
-                {category3.map((res) => {
-                    return (
-                        <a key={res.id} className='link link-hover'>{res.name}</a>
-                    )
-                })}
-            </nav>
-            
+                <nav className="flex flex-col space-y-2">
+                    <a className="link link-hover">Terms of use</a>
+                    <a className="link link-hover">Privacy policy</a>
+                    <a className="link link-hover">Cookie policy</a>
+                </nav>
+            </div>
+          </div>
+
+          <div className="mt-8 lg:mt-0">
+            <h6 className="footer-title">Categories</h6>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {category.map((res) => (
+                <a key={res.id} className="link link-hover">{res.name}</a>
+              ))}
+            </div>
+          </div>
         </footer>
 
-        <footer className="footer bg-base-100 text-base-content border-base-300 border-t px-10 py-4">
-            <aside className="grid-flow-col items-center">
-                <p>© Blink Commerce Private Limited, 2016-2025</p>
-            </aside>
-            <nav className="md:place-self-center md:justify-self-end">
-                <div className="grid grid-flow-col gap-4">
-                    <a>
+        <footer className="bg-base-100 text-base-content border-t border-base-300 px-10 py-4 flex flex-col lg:flex-row justify-between mb-6">
+          <p className='text-center'>© Blink Commerce Private Limited, 2025</p>
+          <nav className="flex space-x-4 mt-4 lg:mt-0 justify-evenly lg:justify-start">
+                <a>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -108,17 +91,11 @@ const Footer = () => {
                         <path
                         d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path>
                     </svg>
-                    </a>
-                </div>
+                </a>
             </nav>
         </footer>
-        <footer className="footer footer-center bg-base-100 text-base-content p-4">
-            <aside>
-                <p>“Blinkit” is owned & managed by "Blink Commerce Private Limited" and is not related, linked or interconnected in whatsoever manner or nature, to “GROFFR.COM” which is a real estate services business operated by “Redstone Consultancy Services Private Limited”.</p>
-            </aside>
-        </footer>
-  </div>
-  )
-}
+      </div>
+    );
+};
 
-export default Footer
+export default Footer;

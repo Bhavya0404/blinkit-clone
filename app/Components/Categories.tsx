@@ -24,7 +24,7 @@ const Categories = () => {
     }, [])
 
   return (
-    <div className='grid grid-cols-10'>
+    <div className='grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10  '>
          {category.map((res) => {
             return (
                 <div key={res.id} onClick={() => router.push(`/cn?categoryId=${res.id}`)}>
