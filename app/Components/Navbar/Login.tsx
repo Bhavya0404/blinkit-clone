@@ -1,23 +1,25 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image';
-import { useUser } from '@auth0/nextjs-auth0/client';
 import Account from './Account';
-
-const openModal = () => {
-    const modal = document.getElementById("login_modal") as HTMLDialogElement;
-    if (modal) {
-      modal.showModal();
-    }
-};
+import NumberModal from './NumberModal';
 
 const Login =  () => {
-  const { user, error, isLoading } = useUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const user = "";
   let firstName: any = "";
   let lastName: any= "";
   if(user){
-    firstName = user.given_name;
-    lastName = user.family_name;
+    firstName = "user.given_name";
+    lastName = "user.family_name";
   }
 
   return (
@@ -27,7 +29,8 @@ const Login =  () => {
         
             <Account firstName={firstName} lastName={lastName} /> :
           <div>
-            <p className="hover:cursor-pointer text-lg" onClick={openModal}><a href="/api/auth/login">Login</a></p>
+            <p className="hover:cursor-pointer text-lg" onClick={openModal}>Login</p>
+            <NumberModal isOpen={isModalOpen} onClose={closeModal} />
           </div>}
       </div>
   )

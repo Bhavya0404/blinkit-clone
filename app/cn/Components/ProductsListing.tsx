@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 
 
 const ProductsListing = () => {
-    // const {user, isLoading: authLoading} = useUser();
     const [isLoading, setLoading] = useState(false);
     const [category, setCategory] = useState<Category[]>([]);
     const [subcategory, setSubCategory] = useState<BasicDetails[]>([]);
