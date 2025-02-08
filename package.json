@@ -11,12 +11,15 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
     "@mapbox/search-js-react": "^1.0.0-beta.22",
+    "@types/socket.io-client": "^3.0.0",
     "ioredis": "^5.4.1",
     "next": "14.2.15",
     "pg": "^8.13.1",
     "pg-pool": "^3.7.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@types/node": "^20",
