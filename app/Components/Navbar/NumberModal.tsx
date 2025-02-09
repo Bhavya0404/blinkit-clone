@@ -4,13 +4,17 @@ import React, { useState } from 'react'
 interface NumberModalProps {
   isOpen: boolean;
   onClose: () => void;
+  user: any;
+  setUser: (user: any) => void;
 }
 
-const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
+
+const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
   const [number, setNumber] = useState('');
   const [userOTP, setuserOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
   const [isOtpScreen, setisOtpScreen] = useState(false);
+  // const [user, setUser] = useState(null);
 
   const validateNumber = async () => {
     const num = parseInt(number);
@@ -23,10 +27,11 @@ const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
       if(res.ok){
         const authData = await res.json();
         setGeneratedOTP(authData.otp);
+        setisOtpScreen(true);
       } else {
         throw new Error("Error recieving OTP");
       }
-      setisOtpScreen(true);
+      
     }
   }
 
@@ -47,13 +52,63 @@ const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
     }
   };
 
-  const validateOTP = () => {
+  const validateOTP = async () => {
     if(parseInt(userOTP) === parseInt(generatedOTP)){
-      console.log("auth success");
+      console.log("auth success", number);
+
+      try {
+        const user = await fetch(`/api/auth/verify_user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({number})
+        })
+        if(user.ok){
+          const userData = await user.json();
+          console.log(userData);
+        } else {
+          throw new Error("error in verifying user");
+        }
+      } catch (error) {
+        console.error("Error in verifying user", error);
+      }
+
+
+      const res = await fetch(`/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({number})
+      })
+      if(res.ok){
+        const resData = await res.json();
+        console.log(resData);
+      } else {
+        throw new Error("error in fetching cookie");
+      }
+
+      try {
+        const res = await fetch(`/api/auth/auth`)
+        if(res.ok){
+          const data = await res.json();
+          console.log(data);
+          if(data.isAuthenticated){
+            setUser(data.user);
+          }
+        } else {
+          throw new Error("error in fetching cookie");
+        }
+      } catch (error) {
+        console.error("Error in fetching cookie", error);
+      }
+
+      resetInput();
+
     } else {
       throw new Error("Error in Auth");
     }
-
   }
 
   const stopEventProp = (event: React.FormEvent<HTMLFormElement>) => {
@@ -63,7 +118,9 @@ const NumberModal = ({isOpen, onClose}: NumberModalProps) => {
   const resetInput = () => {
     onClose();
     setNumber('');
+    setisOtpScreen(false);
   }
+
   return (
     <dialog id="login_modal" className="modal" open={isOpen}>
           {!isOtpScreen ? 

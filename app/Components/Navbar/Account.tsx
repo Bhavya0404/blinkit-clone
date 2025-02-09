@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Account = ({firstName, lastName}: { firstName: string; lastName: string }) => {
+const Account = () => {
   return (
     <div>
         <details className="dropdown ">
@@ -11,7 +11,7 @@ const Account = ({firstName, lastName}: { firstName: string; lastName: string })
                 <li><a>My Orders</a></li>
                 <li><a>Saved Address</a></li>
                 <li>Log Out</li>
-                <li><a>{firstName} {lastName}</a></li>
+                {/* <li><a>{firstName} {lastName}</a></li> */}
             </ul>
         </details>
     </div>
