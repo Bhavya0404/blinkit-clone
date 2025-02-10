@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image';
 import Account from './Account';
 import NumberModal from './NumberModal';
@@ -10,6 +10,8 @@ const Login =  () => {
 
   const setuserState = (user: any) => {
     setUser(user);
+    console.log("user", user);
+    localStorage.setItem('user', JSON.stringify(user));
   }
   const openModal = () => {
     setIsModalOpen(true);
@@ -19,22 +21,21 @@ const Login =  () => {
     setIsModalOpen(false);
   };
 
-  // const user = "";
-  // let firstName: any = "";
-  // let lastName: any= "";
-  // if(user){
-  //   firstName = "user.given_name";
-  //   lastName = "user.family_name";
-  // }
-  if(user){
-    console.log("user", user);
-  }
+  useEffect(() => {
+
+    const storedUser = localStorage.getItem('user');
+    console.log("Retrive user", storedUser);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+  }, []);
   return (
 
       <div>
           {user ? 
         
-            <Account  /> :
+            <Account  userState={setuserState}/> :
           <div>
             <p className="hover:cursor-pointer text-lg" onClick={openModal}>Login</p>
             <NumberModal user={user} setUser={setuserState} isOpen={isModalOpen} onClose={closeModal} />

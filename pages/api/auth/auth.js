@@ -12,7 +12,6 @@ export default async function getUserFromSession(req, res) {
   }
 
   const sessionData = decrypt(sessionCookie);
-  console.log("Session Data", sessionData);
 
   try {
     const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [sessionData.userId]);

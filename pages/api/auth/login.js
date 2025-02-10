@@ -9,11 +9,6 @@ export default async function handler(req, res) {
     const query = `SELECT * FROM users WHERE phone_number = $1`;
     const result = await pool.query(query, [number]);
 
-    
-    if (!result.rows) {
-      res.status(401).json({ message: 'User not found' });
-      return;
-    }
     const user = result.rows[0];
     const sessionData = { userId: user.user_id };
     const encryptedSessionData = encrypt(sessionData)
