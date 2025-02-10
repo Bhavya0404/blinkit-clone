@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import NavBar from "./Components/Navbar/NavBar";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
 import LandingPage from "./Components/Landing-Page/LandingPage";
 import Footer from "./Components/Landing-Page/Footer";
 
@@ -26,14 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme>
-      <UserProvider>
         <body>
           <NavBar />
           {children}
-          <div className='lg:w-8/12 w-full h-full m-auto flex flex-col align-middle overflow-hidden'><Footer /></div>
-          
+          <div className='lg:w-8/12 w-full h-full m-auto flex flex-col align-middle overflow-hidden'><Footer /></div>  
         </body>
-      </UserProvider>
     </html>
   );
 }
