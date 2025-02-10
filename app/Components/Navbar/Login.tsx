@@ -1,33 +1,44 @@
 "use client"
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image';
-import { useUser } from '@auth0/nextjs-auth0/client';
 import Account from './Account';
-
-const openModal = () => {
-    const modal = document.getElementById("login_modal") as HTMLDialogElement;
-    if (modal) {
-      modal.showModal();
-    }
-};
+import NumberModal from './NumberModal';
 
 const Login =  () => {
-  const { user, error, isLoading } = useUser();
-  let firstName: any = "";
-  let lastName: any= "";
-  if(user){
-    firstName = user.given_name;
-    lastName = user.family_name;
-  }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
+  const setuserState = (user: any) => {
+    setUser(user);
+    console.log("user", user);
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+
+    const storedUser = localStorage.getItem('user');
+    console.log("Retrive user", storedUser);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+  }, []);
   return (
 
       <div>
           {user ? 
         
-            <Account firstName={firstName} lastName={lastName} /> :
+            <Account  userState={setuserState}/> :
           <div>
-            <p className="hover:cursor-pointer text-lg" onClick={openModal}><a href="/api/auth/login">Login</a></p>
+            <p className="hover:cursor-pointer text-lg" onClick={openModal}>Login</p>
+            <NumberModal user={user} setUser={setuserState} isOpen={isModalOpen} onClose={closeModal} />
           </div>}
       </div>
   )

@@ -1,12 +1,111 @@
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 
-const NumberModal = () => {
+interface NumberModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: any;
+  setUser: (user: any) => void;
+}
+
+
+const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
+  const [number, setNumber] = useState('');
+  const [userOTP, setuserOTP] = useState('');
+  const [generatedOTP, setGeneratedOTP] = useState('');
+  const [isOtpScreen, setisOtpScreen] = useState(false);
+  // const [user, setUser] = useState(null);
+
+  const validateNumber = async () => {
+    const num = parseInt(number);
+
+      const res = await fetch(`/api/auth/send_sms`);
+      if(res.ok){
+        const authData = await res.json();
+        setGeneratedOTP(authData.otp);
+        setisOtpScreen(true);
+      } else {
+        throw new Error("Error recieving OTP");
+      }
+  }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    
+    // Allow only numbers (0-9) and limit to 10 digits
+    if (/^\d{0,10}$/.test(value)) {
+      setNumber(value);
+    }
+  };
+
+  const handleOTPChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+
+    if (/^\d{0,4}$/.test(value)) {
+      setuserOTP(value);
+    }
+  };
+
+  const validateOTP = async () => {
+    if(parseInt(userOTP) === parseInt(generatedOTP)){
+
+      try {
+        const res = await Promise.all([
+          await fetch(`/api/auth/verify_user`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({number})
+          }),
+          await fetch(`/api/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({number})
+          }),
+          await fetch(`/api/auth/auth`)
+        ])
+
+        const [user, login, auth] = await Promise.all([
+          res[0].json(),
+          res[1].json(),
+          res[2].json()
+        ])
+
+        if((user.message === 'User verified' || user.message === 'User created') && login.message === 'Login Successfull' && auth.isAuthenticated){
+          setUser(auth.user.user_id);
+          resetInput();
+        } else {
+          throw new Error("Error in Auth");
+        }
+      } catch (error) {
+        console.error("Error in verifying user", error);
+      }
+    } else {
+      throw new Error("Error in Auth");
+    }
+  }
+
+  const stopEventProp = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  }
+
+  const resetInput = () => {
+    onClose();
+    setNumber('');
+    setuserOTP('');
+    setisOtpScreen(false);
+  }
+
+
   return (
-    <dialog id="login_modal" className="modal">
+    <dialog id="login_modal" className="modal" open={isOpen}>
+          {!isOtpScreen ? 
             <div className="modal-box h-80">
               <form method="dialog">
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={resetInput}>✕</button>
               </form>
               <div className='flex flex-col justify-between items-center h-full'>
                 <div>
@@ -17,14 +116,37 @@ const NumberModal = () => {
                   <p className='font-bold text-2xl'>India's last minute app</p>
                   <p className='font-medium text-center'>Log in or Sign up</p>
                 </div>
-                <form action="">
+                <form action="#" onSubmit={stopEventProp}>
                   <div className='h-28 flex flex-col justify-around'>
                     <label className="input input-bordered flex items-center gap-4">
                       <p className='font-medium'>+91</p>
-                      <input type="text" className="grow" placeholder="Enter mobile number" />
+                      <input type="text" className="grow" inputMode="numeric"  value={number} placeholder="Enter mobile number" onChange={handleInputChange} />
                     </label>
+                    <button className="btn btn-wide bg-add-button text-white" disabled={number.length !== 10}  onClick={validateNumber}>Continue</button>
+                  </div>
+                </form>
+                <div>
+                  <p className='text-sm'>By continuing, you agree to our Terms of service & Privacy policy</p>
+                </div>
+              </div>
+            </div>  : 
 
-                    <button className="btn btn-wide">Continue</button>
+            <div className="modal-box h-80">
+              <form method="dialog">
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={resetInput}>✕</button>
+              </form>
+              <div className='flex flex-col justify-between items-center h-full'>
+                <div>
+                  <p className='font-bold text-2xl text-center'>OTP Verification</p>
+                  <p className='font-medium text-center'>We have sent a verification code to</p>
+                  <p className='font-medium text-center'>+91-{number}</p>
+                </div>
+                <form action="#" onSubmit={stopEventProp}>
+                  <div className='h-28 flex flex-col justify-around'>
+                    <label className="input input-bordered flex items-center gap-4">
+                      <input type="text" className="grow" inputMode="numeric"  value={userOTP} placeholder="Enter 4 digit otp" onChange={handleOTPChange} />
+                    </label>
+                    <button className="btn btn-wide bg-add-button text-white" disabled={userOTP.length !== 4}  onClick={validateOTP}>Submit</button>
                   </div>
                 </form>
                 <div>
@@ -32,7 +154,8 @@ const NumberModal = () => {
                 </div>
               </div>
             </div>
-          </dialog>
+        } 
+    </dialog>
   )
 }
 
