@@ -50,41 +50,33 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
     if(parseInt(userOTP) === parseInt(generatedOTP)){
 
       try {
-        const res = await Promise.all([
-          await fetch(`/api/auth/verify_user`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({number})
-          }),
-          await fetch(`/api/auth/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({number})
-          }),
-          await fetch(`/api/auth/auth`)
-        ])
-
-        const [user, login, auth] = await Promise.all([
-          res[0].json(),
-          res[1].json(),
-          res[2].json()
-        ])
-
-        if((user.message === 'User verified' || user.message === 'User created') && login.message === 'Login Successfull' && auth.isAuthenticated){
-          setUser(auth.user.user_id);
-          resetInput();
+        const loginRes = await fetch(`/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({number})
+        });
+        if(loginRes.ok){
+          const authRes = await fetch(`/api/auth/auth`);
+          if(authRes.ok){
+            const authData = await authRes.json();
+            if(authData.isAuthenticated){
+              setUser(authData.user.user_id);
+              resetInput();
+            }
+          } else {
+            console.error("Error in Auth");
+          }
         } else {
-          throw new Error("Error in Auth");
+          console.error("Error in Login");
         }
+        
       } catch (error) {
         console.error("Error in verifying user", error);
       }
     } else {
-      throw new Error("Error in Auth");
+      console.log("OTP is incorrect");
     }
   }
 
