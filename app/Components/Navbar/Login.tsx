@@ -11,7 +11,7 @@ const Login =  () => {
   const setuserState = (user: any) => {
     setUser(user);
     console.log("user", user);
-    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem('user', JSON.stringify(user));
   }
   const openModal = () => {
     setIsModalOpen(true);
@@ -23,7 +23,7 @@ const Login =  () => {
 
   useEffect(() => {
 
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     console.log("Retrive user", storedUser);
     if (storedUser) {
       setUser(JSON.parse(storedUser));
