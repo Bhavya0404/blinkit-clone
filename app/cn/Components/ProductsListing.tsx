@@ -23,7 +23,6 @@ const ProductsListing = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             const [categoryRes, subcategoryRes] = await Promise.all([
                 fetch('/api/category'),
                 fetch(`/api/subcategory`, {
@@ -54,6 +53,7 @@ const ProductsListing = () => {
     };
 
     const fetchProducts = async () => {
+        setLoading(true);
         const productRes = await fetch('/api/getproducts', {
             method: 'POST',
             headers: {
@@ -75,6 +75,7 @@ const ProductsListing = () => {
         } else {
             throw new Error('Error fetching products');
         }
+        setLoading(false);
     }
     useEffect(() => {
         fetchData();
@@ -87,6 +88,9 @@ const ProductsListing = () => {
     const displayedCategories = category.slice(0, 7);
   return (
     <div>
+        {isLoading && <div className="fixed inset-0 flex justify-center items-center">
+             <span className="loading loading-spinner loading-lg text-warning"></span>
+        </div>}
         <div className="navbar bg-base-100 min-h-12 p-0" style={{ boxShadow: '0 1px 6px rgba(0, 0, 0, 0.1)' }}>
             <div className='w-8/12 h-full m-auto my-0'>
             <nav className='h-12 w-full flex justify-between items-center'>
