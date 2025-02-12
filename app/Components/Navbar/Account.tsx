@@ -7,7 +7,7 @@ interface AccountProps {
 const Account = ({userState}: AccountProps) => {
   const handleLogout = () => {
     // Clear user authentication data
-    localStorage.removeItem('user'); 
+    sessionStorage.removeItem('user'); 
     userState(null);
   };
   return (

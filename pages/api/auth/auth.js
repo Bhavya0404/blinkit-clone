@@ -17,7 +17,7 @@ export default async function getUserFromSession(req, res) {
     const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [sessionData.userId]);
 
     if (!result.rows.length) {
-      return result.status(401).json({ isAuthenticated: false });
+      return res.status(401).json({ isAuthenticated: false });
     }
 
     return res.status(200).json({ isAuthenticated: true, user: result.rows[0]});

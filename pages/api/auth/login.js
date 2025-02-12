@@ -4,10 +4,18 @@ import pool from '../../../app/database/postgres'
 
 export default async function handler(req, res) {
   const { number } = req.body;
-
+  let result;
   try {
     const query = `SELECT * FROM users WHERE phone_number = $1`;
-    const result = await pool.query(query, [number]);
+    result = await pool.query(query, [number]);
+
+    if(!result.rows.length){
+      const insertQuery = `INSERT INTO users (phone_number) VALUES ($1)`;
+      await pool.query(insertQuery, [number]);
+      
+      const query = `SELECT * FROM users WHERE phone_number = $1`;
+      result = await pool.query(query, [number]);
+  }
 
     const user = result.rows[0];
     const sessionData = { userId: user.user_id };
