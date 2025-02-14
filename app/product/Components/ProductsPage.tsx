@@ -105,7 +105,7 @@ const ProductsPage = () => {
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>
                 <div className='pt-3'>
-                    <AddToCart />
+                    <AddToCart productId={productId || ''} />
                 </div>
             </div>
 

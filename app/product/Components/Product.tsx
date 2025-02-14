@@ -33,7 +33,7 @@ const Product = ({ product }: {product: ProductType}) => {
 
                 <div className='h-8 flex justify-between items-center'>
                     <p className='font-bold w-8 h-6'>₹{Number(product.price)}</p>
-                    <AddToCart />
+                    <AddToCart productId={product.id}/>
                 </div>
             </div>
         </div>

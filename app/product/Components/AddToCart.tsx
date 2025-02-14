@@ -1,17 +1,49 @@
 import React, { useState } from 'react'
 
-const AddToCart = () => {
+const AddToCart = ({productId}: {productId: string}) => {
     const [addedProduct, setAddedProduct] = useState(0);
-    const increment = (event: React.MouseEvent) => {
+    const userId = JSON.parse(sessionStorage.getItem('user') || '{}');
+    const storeId = 3;
+
+    const increment = async (event: React.MouseEvent) => {
         event.stopPropagation(); // Prevents parent div's onClick from firing
-        setAddedProduct((prev) => prev + 1);
+        console.log("productId AddToCart", productId);
+        try {
+          const res = await fetch('/api/cart', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({userId: userId, storeId: storeId, productId: productId, addProduct: true})
+          });
+          setAddedProduct((prev) => prev + 1);
+          const data = await res.json();
+        } catch (error) {
+          console.error("Error adding to cart", error);
+        }
       };
     
-      const decrement = (event: React.MouseEvent) => {
+      const decrement = async (event: React.MouseEvent) => {
         event.stopPropagation(); 
         if (addedProduct > 0) {
-          setAddedProduct((prev) => prev - 1);
-        }
+          // setAddedProduct((prev) => prev - 1);
+          console.log("productId RemoveFromCart", productId);
+          try {
+            const res = await fetch('/api/cart', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({userId: userId, storeId: storeId, productId: productId, addProduct: false})
+            });
+            setAddedProduct((prev) => prev - 1);
+            const data = await res.json();
+            console.log("Remove from cart response", data);
+          } catch (error) {
+            console.error("Error removing from cart", error);
+          }
+        };
+  
       };
       
   return (
