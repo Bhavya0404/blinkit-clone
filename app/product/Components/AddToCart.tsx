@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 
-const AddToCart = ({productId}: {productId: string}) => {
+const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) => {
+
     const [addedProduct, setAddedProduct] = useState(0);
     const userId = JSON.parse(sessionStorage.getItem('user') || '{}');
     const storeId = 3;
@@ -45,7 +47,17 @@ const AddToCart = ({productId}: {productId: string}) => {
         };
   
       };
-      
+
+      async function getCartDetails() {
+        if(cartInfo?.cart?.length) {
+          const cartData = cartInfo.cart.filter((res: any) => res.productId === productId);
+          setAddedProduct(cartData[0]?.quantity);
+        }
+      }
+      useEffect(() => {
+        getCartDetails();
+      }, [cartInfo]);
+
   return (
     <div>
         {!addedProduct ? 
