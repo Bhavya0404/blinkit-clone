@@ -8,6 +8,8 @@ import AddToCart from './AddToCart';
 
 const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
+    const [userId, setUserId] = useState(null);
+    const [cartDetails, setCartDetails] = useState([]);
     const params = useSearchParams();
     const productId = params?.get('productId');
 
@@ -28,9 +30,35 @@ const ProductsPage = () => {
         }
         
     }
+
+    function getUserId(){
+        const storedUser = sessionStorage.getItem('user');
+        if (storedUser) {
+          setUserId(JSON.parse(storedUser));
+        }
+    }
+
+    const fetchCartDetails = async () => {
+        if(userId){
+            const response = await fetch('/api/cartdetails', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({id: userId}),
+            });
+            const data = await response.json();
+            setCartDetails(data);
+        }
+    }
+
+    useEffect(() => {
+        fetchCartDetails();
+    }, [userId]);
     
     useEffect(() => {
         fetchProductDetails();
+        getUserId(); 
     }, [])
   return (
     <div className='w-9/12 m-auto mb-10 flex align-middle overflow-hidden'>
@@ -105,7 +133,7 @@ const ProductsPage = () => {
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>
                 <div className='pt-3'>
-                    <AddToCart productId={productId || ''} />
+                    <AddToCart productId={productId || ''} cartInfo={cartDetails}/>
                 </div>
             </div>
 

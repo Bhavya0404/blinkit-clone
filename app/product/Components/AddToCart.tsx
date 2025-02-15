@@ -18,8 +18,8 @@ const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) =>
             },
             body: JSON.stringify({userId: userId, storeId: storeId, productId: productId, addProduct: true})
           });
-          setAddedProduct((prev) => prev + 1);
           const data = await res.json();
+          setAddedProduct((prev) => prev + 1);
         } catch (error) {
           console.error("Error adding to cart", error);
         }
@@ -28,7 +28,6 @@ const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) =>
       const decrement = async (event: React.MouseEvent) => {
         event.stopPropagation(); 
         if (addedProduct > 0) {
-          // setAddedProduct((prev) => prev - 1);
           console.log("productId RemoveFromCart", productId);
           try {
             const res = await fetch('/api/cart', {
@@ -38,8 +37,8 @@ const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) =>
               },
               body: JSON.stringify({userId: userId, storeId: storeId, productId: productId, addProduct: false})
             });
-            setAddedProduct((prev) => prev - 1);
             const data = await res.json();
+            setAddedProduct((prev) => prev - 1);
             console.log("Remove from cart response", data);
           } catch (error) {
             console.error("Error removing from cart", error);
@@ -51,7 +50,9 @@ const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) =>
       async function getCartDetails() {
         if(cartInfo?.cart?.length) {
           const cartData = cartInfo.cart.filter((res: any) => res.productId === productId);
-          setAddedProduct(cartData[0]?.quantity);
+          if(cartData[0]?.productId === productId) {
+            setAddedProduct(cartData[0]?.quantity);
+          }
         }
       }
       useEffect(() => {
