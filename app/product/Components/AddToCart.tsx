@@ -1,19 +1,64 @@
-import React, { useState } from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 
-const AddToCart = () => {
+const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) => {
+
     const [addedProduct, setAddedProduct] = useState(0);
-    const increment = (event: React.MouseEvent) => {
+    const userId = JSON.parse(sessionStorage.getItem('user') || '{}');
+    const storeId = 3;
+
+    const increment = async (event: React.MouseEvent) => {
         event.stopPropagation(); // Prevents parent div's onClick from firing
-        setAddedProduct((prev) => prev + 1);
-      };
-    
-      const decrement = (event: React.MouseEvent) => {
-        event.stopPropagation(); 
-        if (addedProduct > 0) {
-          setAddedProduct((prev) => prev - 1);
+        console.log("productId AddToCart", productId);
+        try {
+          const res = await fetch('/api/cart', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({userId: userId, storeId: storeId, productId: productId, addProduct: true})
+          });
+          const data = await res.json();
+          setAddedProduct((prev) => prev + 1);
+        } catch (error) {
+          console.error("Error adding to cart", error);
         }
       };
-      
+    
+      const decrement = async (event: React.MouseEvent) => {
+        event.stopPropagation(); 
+        if (addedProduct > 0) {
+          console.log("productId RemoveFromCart", productId);
+          try {
+            const res = await fetch('/api/cart', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({userId: userId, storeId: storeId, productId: productId, addProduct: false})
+            });
+            const data = await res.json();
+            setAddedProduct((prev) => prev - 1);
+            console.log("Remove from cart response", data);
+          } catch (error) {
+            console.error("Error removing from cart", error);
+          }
+        };
+  
+      };
+
+      async function getCartDetails() {
+        if(cartInfo?.cart?.length) {
+          const cartData = cartInfo.cart.filter((res: any) => res.productId === productId);
+          if(cartData[0]?.productId === productId) {
+            setAddedProduct(cartData[0]?.quantity);
+          }
+        }
+      }
+      useEffect(() => {
+        getCartDetails();
+      }, [cartInfo]);
+
   return (
     <div>
         {!addedProduct ? 

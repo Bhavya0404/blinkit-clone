@@ -1,13 +1,12 @@
 import { ProductType } from '@/app/types/interfaces';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AddToCart from './AddToCart';
 
 
-const Product = ({ product }: {product: ProductType}) => {
+const Product = ({ product, cartDetails }: {product: ProductType, cartDetails: any}) => {
     const router = useRouter();
-
   return (
     <div className="items-center w-[180px] pb-3 border shadow-card-box-shadow shadow bg-card-bg rounded-lg m-3" onClick={ () => router.push(`/product?productId=${product.id}`) }>
         <div className='flex justify-center'>
@@ -33,7 +32,7 @@ const Product = ({ product }: {product: ProductType}) => {
 
                 <div className='h-8 flex justify-between items-center'>
                     <p className='font-bold w-8 h-6'>₹{Number(product.price)}</p>
-                    <AddToCart />
+                    <AddToCart productId={product.id} cartInfo={cartDetails}/>
                 </div>
             </div>
         </div>
