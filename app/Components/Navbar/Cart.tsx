@@ -6,30 +6,6 @@ const Cart = () => {
   const [userId, setUserId] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState(0);
 
-  const socketRef = useRef<Socket | null>(null);
-
-  const socketInitializer = async () => {
-    await fetch('/api/websocket')
-    socketRef.current = io(undefined, {
-      path: "/api/websocket",
-    });
-
-    socketRef.current.on('connect', () => console.log('Connected to WebSocket:'));
-
-    socketRef.current.on('update-input', (msg: any)=> {
-      console.log("client msg: ", msg)
-      setInput(msg)
-    })
-
-    socketRef.current.on("disconnect", () => console.log("Disconnected from WebSocket"));
-    socketRef.current.on("error", (err: any) => console.error("Socket error:", err));
-  }
-  const [input, setInput] = useState('')
-
-  const onChangeHandler = (e: any) => {
-    setInput(e.target.value);
-    socketRef.current?.emit('input-change', e.target.value);
-  }
 
   function getUserId(){
     const storedUser = sessionStorage.getItem('user');
@@ -49,29 +25,36 @@ const Cart = () => {
           });
           const data = await response.json();
           const totalQuantity = data.cart.reduce((sum: number, curr: any) => sum + curr.quantity, 0); // sum = 0, curr maps to each element in the array
-          console.log("totalQuantity", totalQuantity);
           setTotalQuantity(totalQuantity);
       }
   }
 
   useEffect(() => {
+    if (userId) {
       fetchCartDetails();
+  
+      const eventSource = new EventSource(`/api/cart-updates?userId=${userId}`);  
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setTotalQuantity(data.totalQuantity);
+      };
+  
+      eventSource.onerror = (error) => {
+        eventSource.close();
+      };
+  
+      return () => {
+        eventSource.close();
+      };
+    }
   }, [userId]);
 
   useEffect(() => {
     getUserId();  
-    socketInitializer()
   }, [])
   return (
     <div>
-      {/* <form action="">
-      <input
-    placeholder="Type something"
-    value={input}
-    onChange={onChangeHandler}
-  />
-  <button>Send</button>
-      </form> */}
       <button className='btn bg-cart-green text-white flex items-center space-x-2 font-bold hover:bg-cart-green'> 
           <svg
           xmlns="http://www.w3.org/2000/svg"
