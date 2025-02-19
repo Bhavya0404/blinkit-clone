@@ -1,10 +1,5 @@
 import { createSubscriber } from '../../lib/redisPubSub';
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+import { getCart } from '../../lib/cartservice';
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -26,6 +21,18 @@ export default async function handler(req, res) {
     Connection: 'keep-alive',
   });
   res.write('\n');
+
+  try {
+    // Fetch initial cart state from DB or Redis cache
+    const cartData = await getCart(userId); 
+    const initialQuantity = cartData.cart.reduce((sum, curr) => sum + curr.quantity, 0);
+
+    // Send initial totalQuantity to client
+    res.write(`data: ${JSON.stringify({ totalQuantity: initialQuantity })}\n\n`);
+    res.flush();
+  } catch (error) {
+    console.error("[SSE] Failed to fetch initial cart data:", error);
+  }
 
   // Create a separate subscriber connection.
   const redisSubscriber = createSubscriber();

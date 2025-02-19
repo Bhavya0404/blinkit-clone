@@ -13,39 +13,26 @@ const Cart = () => {
     }
   }
 
-  const fetchCartDetails = async () => {
-      if(userId){
-          const response = await fetch('/api/cartdetails', {
-              method: 'POST',
-              headers: { 
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({id: userId}),
-          });
-          const data = await response.json();
-          const totalQuantity = data.cart.reduce((sum: number, curr: any) => sum + curr.quantity, 0); // sum = 0, curr maps to each element in the array
-          setTotalQuantity(totalQuantity);
-      }
+  const fetchRealtimeCartDetails = async () => {
+    const eventSource = new EventSource(`/api/cart-updates?userId=${userId}`);  
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setTotalQuantity(Number(data.totalQuantity));
+    };
+
+    eventSource.onerror = (error) => {
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
   }
 
   useEffect(() => {
     if (userId) {
-      fetchCartDetails();
-  
-      const eventSource = new EventSource(`/api/cart-updates?userId=${userId}`);  
-
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        setTotalQuantity(data.totalQuantity);
-      };
-  
-      eventSource.onerror = (error) => {
-        eventSource.close();
-      };
-  
-      return () => {
-        eventSource.close();
-      };
+      fetchRealtimeCartDetails();  
     }
   }, [userId]);
 
