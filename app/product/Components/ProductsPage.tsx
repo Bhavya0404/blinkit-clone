@@ -4,9 +4,12 @@ import React, { useEffect, useState } from 'react'
 import Carousel from './Carousel';
 import { ProductType } from '@/app/types/interfaces';
 import { useSearchParams } from 'next/navigation';
+import AddToCart from './AddToCart';
 
 const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
+    const [userId, setUserId] = useState(null);
+    const [cartDetails, setCartDetails] = useState([]);
     const params = useSearchParams();
     const productId = params?.get('productId');
 
@@ -27,9 +30,35 @@ const ProductsPage = () => {
         }
         
     }
+
+    function getUserId(){
+        const storedUser = sessionStorage.getItem('user');
+        if (storedUser) {
+          setUserId(JSON.parse(storedUser));
+        }
+    }
+
+    const fetchCartDetails = async () => {
+        if(userId){
+            const response = await fetch('/api/cartdetails', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({id: userId}),
+            });
+            const data = await response.json();
+            setCartDetails(data);
+        }
+    }
+
+    useEffect(() => {
+        fetchCartDetails();
+    }, [userId]);
     
     useEffect(() => {
         fetchProductDetails();
+        getUserId(); 
     }, [])
   return (
     <div className='w-9/12 m-auto mb-10 flex align-middle overflow-hidden'>
@@ -104,7 +133,7 @@ const ProductsPage = () => {
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>
                 <div className='pt-3'>
-                    <button className='w-16 h-8 text-add-button border-solid border border-add-button rounded-md gap-0.5 cursor-pointer'>Add</button>
+                    <AddToCart productId={productId || ''} cartInfo={cartDetails}/>
                 </div>
             </div>
 
