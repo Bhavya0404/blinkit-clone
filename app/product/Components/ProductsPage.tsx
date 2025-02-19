@@ -19,7 +19,7 @@ const ProductsPage = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ productId: productId })
+            body: JSON.stringify({ productId: productId, fromCart: false })
         })
         if(res.ok){
             const data = await res.json();

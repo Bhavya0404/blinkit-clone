@@ -9,7 +9,6 @@ const AddToCart = ({productId, cartInfo}: {productId: string, cartInfo: any}) =>
 
     const increment = async (event: React.MouseEvent) => {
         event.stopPropagation(); // Prevents parent div's onClick from firing
-        console.log("productId AddToCart", productId);
         try {
           const res = await fetch('/api/cart', {
             method: 'POST',

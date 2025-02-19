@@ -13,8 +13,10 @@ export default async function cart (req, res) {
 
         const cartData = await getCart(userId);
         const totalQuantity = cartData.cart.reduce((sum, curr) => sum + curr.quantity, 0);
+        const productIds = cartData.cart.map(item => item.productId);
+
         console.log("totalQuantity BE", totalQuantity);
-        await publisher.publish(`cart-updates:${userId}`, JSON.stringify(totalQuantity));
+        await publisher.publish(`cart-updates:${userId}`, JSON.stringify({totalQuantity, productIds}));
 
         res.status(200).json({result, totalQuantity});
 
