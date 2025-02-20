@@ -5,8 +5,8 @@ const Cart = () => {
   const [userId, setUserId] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [productIds, setProductIds] = useState([]);
   const [cartDetails, setCartDetails] = useState([]);
+  const [itemTotal, setItemTotal] = useState(0);
 
   function getUserId(){
     const storedUser = sessionStorage.getItem('user');
@@ -27,7 +27,7 @@ const Cart = () => {
         const data = await response.json();
         const totalQuantity = data.cart.reduce((sum: number, curr: any) => sum + curr.quantity, 0); // sum = 0, curr maps to each element in the array
         // setTotalQuantity(totalQuantity);
-        setCartDetails(data);
+        // setCartDetails(data);
     }
   }
 
@@ -36,8 +36,13 @@ const Cart = () => {
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("data", data);
+      const itemsPrice = data.sseData.productDetails?.reduce(
+        (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0);
+        
+      setItemTotal(itemsPrice);
       setTotalQuantity(Number(data.sseData.totalQuantity));
-      setProductIds(data.sseData.productIds);
+      setCartDetails(data.sseData.productDetails);
     };
 
     eventSource.onerror = (error) => {
@@ -78,7 +83,7 @@ const Cart = () => {
           {totalQuantity ?  
           <div className='flex flex-col'>
             <p>{totalQuantity} items</p> 
-            <p className='self-start'>₹120</p>
+            <p className='self-start'>₹{itemTotal}</p>
           </div>
           : <p>My Cart</p>
           }
@@ -104,7 +109,7 @@ const Cart = () => {
             ></label>
 
             <ul className="menu bg-right-product-bg text-base-content min-h-full w-96 ">
-              <CartProducts productId={productIds} cartDetails={cartDetails} />
+              <CartProducts cartDetails={cartDetails} />
             </ul>
           </div>
         </div>

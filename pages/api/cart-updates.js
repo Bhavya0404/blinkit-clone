@@ -52,6 +52,7 @@ export default async function handler(req, res) {
   // When a new message comes on the channel, send it via SSE.
   redisSubscriber.on('message', (_channel, message) => {
     const parsedMessage = JSON.parse(message);
+    // console.log("parsedMessage", parsedMessage);
     res.write(`data: ${JSON.stringify({ sseData: parsedMessage })}\n\n`);
     res.flush();
   });

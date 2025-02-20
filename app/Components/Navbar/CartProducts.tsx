@@ -3,10 +3,16 @@ import { ProductType } from '@/app/types/interfaces';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 
-const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetails: any}) => {
+const CartProducts = ({cartDetails}: {cartDetails: any}) => {
 
     const [productsDetails, setProductsDetails] = useState<ProductType[]>();
+    const [itemTotal, setItemTotal] = useState(0);
+    const [deliveryCharge, setDeliveryCharge] = useState(30);
+    const [handlingCharge, setHandlingCharge] = useState(9);
+    const [grandTotal, setGrandTotal] = useState(0);
+
     const fetchProductDetails = async () => {
+        const productId = cartDetails.map((res: any) => res.productId);
         const res = await fetch('/api/productdetails', {
             method: 'POST',
             headers: {
@@ -23,9 +29,22 @@ const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetail
         }
         
     }
+    const BillDetails = async () => {
+        const itemsPrice = cartDetails?.reduce(
+            (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0);
+          
+        console.log("Total Price:", itemsPrice);
+        setItemTotal(itemsPrice);
+        setGrandTotal(itemsPrice + deliveryCharge + handlingCharge);
+    }
+
     useEffect(() => {
         fetchProductDetails();
     }, [])
+
+    useEffect(() => {
+        BillDetails();
+    }, [cartDetails])
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -49,7 +68,7 @@ const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetail
                             </div>
                         </div>
                         <div className='mr-4 self-center'>
-                            <AddToCart productId={res.productId} cartInfo={cartDetails}/>
+                            <AddToCart productId={res.productId} cartInfo={{cart: cartDetails}}/>
                         </div>
                     </div>
                 ))}
@@ -73,7 +92,7 @@ const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetail
                             <p>Items Total</p>
                         </div>
                         <div>
-                            <p>₹420</p>
+                            <p>₹{itemTotal}</p>
                         </div>
                     </div>
                     <div className='flex justify-between'>
@@ -88,7 +107,7 @@ const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetail
                             <p>Delivery charge</p>
                         </div>
                         <div>
-                            <p>₹30</p>
+                            <p>₹{deliveryCharge}</p>
                         </div>
                     </div>
 
@@ -103,13 +122,13 @@ const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetail
                             <p>Handling charge</p>
                         </div>
                         <div>
-                            <p>₹9</p>
+                            <p>₹{handlingCharge}</p>
                         </div>
                     </div>
 
                     <div className='flex justify-between mt-2'>
                         <p className='font-bold'>Grand Total</p>
-                        <p className='font-bold'>₹459</p>
+                        <p className='font-bold'>₹{grandTotal}</p>
                     </div>
                     
                 </div>
@@ -139,7 +158,7 @@ const CartProducts = ({productId, cartDetails}: {productId: string[], cartDetail
                     <button className='bg-green-700 text-white px-3 py-2 rounded-md w-full'>
                         <div className='flex justify-between w-full'>
                             <div>
-                                <p className='font-bold text-left'>₹459</p>
+                                <p className='font-bold text-left'>₹{grandTotal}</p>
                                 <p className=''>TOTAL</p>
                             </div>
                             <p className='self-center text-lg'>Proceed to Pay</p>
