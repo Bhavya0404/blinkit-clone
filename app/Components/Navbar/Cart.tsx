@@ -1,10 +1,12 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react'
-
+import CartProducts from './CartProducts';
 const Cart = () => {
   const [userId, setUserId] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState(0);
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [cartDetails, setCartDetails] = useState([]);
+  const [itemTotal, setItemTotal] = useState(0);
 
   function getUserId(){
     const storedUser = sessionStorage.getItem('user');
@@ -13,12 +15,34 @@ const Cart = () => {
     }
   }
 
+  const fetchCartDetails = async () => {
+    if(userId){
+        const response = await fetch('/api/cartdetails', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id: userId}),
+        });
+        const data = await response.json();
+        const totalQuantity = data.cart.reduce((sum: number, curr: any) => sum + curr.quantity, 0); // sum = 0, curr maps to each element in the array
+        // setTotalQuantity(totalQuantity);
+        // setCartDetails(data);
+    }
+  }
+
   const fetchRealtimeCartDetails = async () => {
     const eventSource = new EventSource(`/api/cart-updates?userId=${userId}`);  
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      setTotalQuantity(Number(data.totalQuantity));
+      console.log("data", data);
+      const itemsPrice = data.sseData.productDetails?.reduce(
+        (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0);
+        
+      setItemTotal(itemsPrice);
+      setTotalQuantity(Number(data.sseData.totalQuantity));
+      setCartDetails(data.sseData.productDetails);
     };
 
     eventSource.onerror = (error) => {
@@ -32,6 +56,7 @@ const Cart = () => {
 
   useEffect(() => {
     if (userId) {
+      fetchCartDetails();
       fetchRealtimeCartDetails();  
     }
   }, [userId]);
@@ -41,7 +66,7 @@ const Cart = () => {
   }, [])
   return (
     <div>
-      <button className='btn bg-cart-green text-white flex items-center space-x-2 font-bold hover:bg-cart-green'> 
+      <button className='btn bg-cart-green text-white flex items-center space-x-2 font-bold hover:bg-cart-green' onClick={() => setIsDrawerOpen(true)}> 
           <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-5 w-5"
@@ -58,11 +83,37 @@ const Cart = () => {
           {totalQuantity ?  
           <div className='flex flex-col'>
             <p>{totalQuantity} items</p> 
-            <p className='self-start'>₹120</p>
+            <p className='self-start'>₹{itemTotal}</p>
           </div>
           : <p>My Cart</p>
           }
         </button>
+
+        {isDrawerOpen && (
+        <div className="drawer drawer-end">
+          <input
+            id="cart-drawer"
+            type="checkbox"
+            className="drawer-toggle"
+            checked={isDrawerOpen}
+            onChange={() => setIsDrawerOpen(!isDrawerOpen)}
+          />
+
+
+          <div className="drawer-side">
+            <label
+              htmlFor="cart-drawer"
+              aria-label="close sidebar"
+              className="drawer-overlay"
+              onClick={() => setIsDrawerOpen(false)}
+            ></label>
+
+            <ul className="menu bg-right-product-bg text-base-content min-h-full w-96 ">
+              <CartProducts cartDetails={cartDetails} />
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

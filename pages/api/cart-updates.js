@@ -26,9 +26,10 @@ export default async function handler(req, res) {
     // Fetch initial cart state from DB or Redis cache
     const cartData = await getCart(userId); 
     const initialQuantity = cartData.cart.reduce((sum, curr) => sum + curr.quantity, 0);
+    const productIds = cartData.cart.map(item => item.productId);
 
     // Send initial totalQuantity to client
-    res.write(`data: ${JSON.stringify({ totalQuantity: initialQuantity })}\n\n`);
+    res.write(`data: ${JSON.stringify({ sseData: { totalQuantity: initialQuantity, productId: productIds }})}\n\n`);
     res.flush();
   } catch (error) {
     console.error("[SSE] Failed to fetch initial cart data:", error);
@@ -50,7 +51,9 @@ export default async function handler(req, res) {
 
   // When a new message comes on the channel, send it via SSE.
   redisSubscriber.on('message', (_channel, message) => {
-    res.write(`data: ${JSON.stringify({ totalQuantity: message })}\n\n`);
+    const parsedMessage = JSON.parse(message);
+    // console.log("parsedMessage", parsedMessage);
+    res.write(`data: ${JSON.stringify({ sseData: parsedMessage })}\n\n`);
     res.flush();
   });
   
