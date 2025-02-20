@@ -3,15 +3,16 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image';
 import Account from './Account';
 import NumberModal from './NumberModal';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hook';
+import { getUser, setUser } from '@/lib/redux/features/user/userSlice';
 
 const Login =  () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const dispatch = useAppDispatch()
+  const user = useAppSelector(state => state.user.userId)
 
   const setuserState = (user: any) => {
-    setUser(user);
-    console.log("user", user);
-    sessionStorage.setItem('user', JSON.stringify(user));
+    dispatch(setUser(user))
   }
   const openModal = () => {
     setIsModalOpen(true);
@@ -22,14 +23,9 @@ const Login =  () => {
   };
 
   useEffect(() => {
-
-    const storedUser = sessionStorage.getItem('user');
-    console.log("Retrive user", storedUser);
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-
+    dispatch(getUser());
   }, []);
+
   return (
 
       <div>

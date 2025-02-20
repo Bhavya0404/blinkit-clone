@@ -1,19 +1,16 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react'
 import CartProducts from './CartProducts';
+import { useAppSelector } from '@/lib/redux/hook';
+import { useAppDispatch } from '@/lib/redux/hook';
+import { getUser } from '@/lib/redux/features/user/userSlice';
 const Cart = () => {
-  const [userId, setUserId] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [cartDetails, setCartDetails] = useState([]);
   const [itemTotal, setItemTotal] = useState(0);
-
-  function getUserId(){
-    const storedUser = sessionStorage.getItem('user');
-    if (storedUser) {
-      setUserId(JSON.parse(storedUser));
-    }
-  }
+  const dispatch = useAppDispatch()
+  const userId = useAppSelector(state => state.user.userId)
 
   const fetchCartDetails = async () => {
     if(userId){
@@ -62,7 +59,7 @@ const Cart = () => {
   }, [userId]);
 
   useEffect(() => {
-    getUserId();  
+    dispatch(getUser());  
   }, [])
   return (
     <div>

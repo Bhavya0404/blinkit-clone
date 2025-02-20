@@ -2,13 +2,17 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Product from '../../product/Components/Product';
 import { ProductType } from '@/app/types/interfaces';
+import { getUser } from '@/lib/redux/features/user/userSlice';
+import { useAppDispatch } from '@/lib/redux/hook';
+import { useAppSelector } from '@/lib/redux/hook';
 
 
 const ProductCarousel = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [userId, setUserId] = useState(null);
     const [cartDetails, setCartDetails] = useState([]);
+    const dispatch = useAppDispatch()
+    const userId = useAppSelector(state => state.user.userId)
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     
@@ -53,13 +57,6 @@ const ProductCarousel = () => {
         });
     };
 
-    function getUserId(){
-        const storedUser = sessionStorage.getItem('user');
-        if (storedUser) {
-          setUserId(JSON.parse(storedUser));
-        }
-    }
-
     const fetchCartDetails = async () => {
         if(userId){
             const response = await fetch('/api/cartdetails', {
@@ -76,7 +73,7 @@ const ProductCarousel = () => {
 
     useEffect(() => {
         fetchProducts();
-        getUserId();   
+        dispatch(getUser());   
     }, [])
 
     useEffect(() => {

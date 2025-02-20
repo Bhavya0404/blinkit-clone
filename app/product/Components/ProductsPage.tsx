@@ -5,11 +5,15 @@ import Carousel from './Carousel';
 import { ProductType } from '@/app/types/interfaces';
 import { useSearchParams } from 'next/navigation';
 import AddToCart from './AddToCart';
+import { useAppDispatch } from '@/lib/redux/hook';
+import { useAppSelector } from '@/lib/redux/hook';
+import { getUser } from '@/lib/redux/features/user/userSlice';
 
 const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
-    const [userId, setUserId] = useState(null);
     const [cartDetails, setCartDetails] = useState([]);
+    const dispatch = useAppDispatch()
+    const userId = useAppSelector(state => state.user.userId)
     const params = useSearchParams();
     const productId = params?.get('productId');
 
@@ -29,13 +33,6 @@ const ProductsPage = () => {
             throw new Error('Error fetching product details');
         }
         
-    }
-
-    function getUserId(){
-        const storedUser = sessionStorage.getItem('user');
-        if (storedUser) {
-          setUserId(JSON.parse(storedUser));
-        }
     }
 
     const fetchCartDetails = async () => {
@@ -58,7 +55,7 @@ const ProductsPage = () => {
     
     useEffect(() => {
         fetchProductDetails();
-        getUserId(); 
+        dispatch(getUser()); 
     }, [])
   return (
     <div className='w-9/12 m-auto mb-10 flex align-middle overflow-hidden'>

@@ -12,7 +12,6 @@ export default async function cart (req, res) {
         }
 
         const cartData = await getCart(userId);
-        console.log("cartData", cartData);
         const totalQuantity = cartData.cart.reduce((sum, curr) => sum + curr.quantity, 0);
         const productDetails = cartData.cart.map(item => {
             return {
@@ -22,7 +21,6 @@ export default async function cart (req, res) {
             }
         });
 
-        console.log("totalQuantity BE", totalQuantity);
         await publisher.publish(`cart-updates:${userId}`, JSON.stringify({totalQuantity, productDetails}));
 
         res.status(200).json({result, totalQuantity, productDetails});

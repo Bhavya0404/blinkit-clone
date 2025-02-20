@@ -14,7 +14,6 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
   const [userOTP, setuserOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
   const [isOtpScreen, setisOtpScreen] = useState(false);
-  // const [user, setUser] = useState(null);
 
   const validateNumber = async () => {
     const num = parseInt(number);

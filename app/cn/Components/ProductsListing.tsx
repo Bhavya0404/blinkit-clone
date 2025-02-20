@@ -1,6 +1,9 @@
 "use client"
 import Product from '@/app/product/Components/Product';
 import { BasicDetails, Category, ProductType } from '@/app/types/interfaces';
+import { getUser } from '@/lib/redux/features/user/userSlice';
+import { useAppSelector } from '@/lib/redux/hook';
+import { useAppDispatch } from '@/lib/redux/hook';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -12,8 +15,9 @@ const ProductsListing = () => {
     const [currentSubcategory, setCurrentSubcategory] = useState<BasicDetails>();
     const [products, setProducts] = useState<ProductType[]>([]);
     const [selectedTab, setSelectedTab] = useState('');
-    const [userId, setUserId] = useState(null);
     const [cartDetails, setCartDetails] = useState([]);
+    const dispatch = useAppDispatch()
+    const userId = useAppSelector(state => state.user.userId)
     const params = useSearchParams();
     const categoryId = params?.get('categoryId');
 
@@ -80,12 +84,6 @@ const ProductsListing = () => {
         setLoading(false);
     }
 
-    function getUserId(){
-        const storedUser = sessionStorage.getItem('user');
-        if (storedUser) {
-          setUserId(JSON.parse(storedUser));
-        }
-    }
 
     const fetchCartDetails = async () => {
         if(userId){
@@ -114,7 +112,7 @@ const ProductsListing = () => {
     }, [userId]);
 
     useEffect(() => {
-        getUserId();   
+        dispatch(getUser());   
     }, [])
 
     const displayedCategories = category.slice(0, 7);

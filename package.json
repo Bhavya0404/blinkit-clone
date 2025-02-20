@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mapbox/search-js-react": "^1.0.0-beta.22",
+    "@reduxjs/toolkit": "^2.5.1",
     "cookie": "^1.0.2",
     "ioredis": "^5.4.1",
     "next": "14.2.15",
@@ -17,6 +18,7 @@
     "pg-pool": "^3.7.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-redux": "^9.2.0",
     "twilio": "^5.4.3"
   },
   "devDependencies": {
