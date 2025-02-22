@@ -16,7 +16,7 @@ const ProductCarousel = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ subCategoryId: 'd0e6c978-e5ee-49a7-8b8e-577af537ae57' })
+            body: JSON.stringify({ subCategoryId: 'd0e6c978-e5ee-49a7-8b8e-577af537ae57', storeId: parseInt(sessionStorage.getItem('store') || '') })
         })
 
         if(productRes.ok){

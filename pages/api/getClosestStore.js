@@ -23,7 +23,7 @@ export default async function findNearestDarkStore(req, res) {
         )
         -- Retrieve stores within the hexagon and find the nearest one
         SELECT 
-            s.store_name,
+            s.store_id,
             s.latitude,
             s.longitude,
             ST_Distance(u.location::geography, s.location::geography) AS distance_in_meters
