@@ -3,12 +3,9 @@ import React, { useEffect, useState, useRef } from 'react'
 import Product from '../../product/Components/Product';
 import { ProductType } from '@/app/types/interfaces';
 
-
 const ProductCarousel = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [userId, setUserId] = useState(null);
-    const [cartDetails, setCartDetails] = useState([]);
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     
@@ -53,35 +50,11 @@ const ProductCarousel = () => {
         });
     };
 
-    function getUserId(){
-        const storedUser = sessionStorage.getItem('user');
-        if (storedUser) {
-          setUserId(JSON.parse(storedUser));
-        }
-    }
-
-    const fetchCartDetails = async () => {
-        if(userId){
-            const response = await fetch('/api/cartdetails', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id: userId}),
-            });
-            const data = await response.json();
-            setCartDetails(data);
-        }
-    }
 
     useEffect(() => {
         fetchProducts();
-        getUserId();   
     }, [])
 
-    useEffect(() => {
-        fetchCartDetails();
-    }, [userId]);
 
     const productsData = products.slice(0, 10);
   return (
@@ -95,7 +68,7 @@ const ProductCarousel = () => {
             <div ref={scrollContainerRef}className="flex overflow-x-scroll scrollbar-hidden mx-auto px-8 lg:overflow-x-hidden scroll-smooth">
                 {productsData.map((res)=> {
                     return (
-                        <Product key={res.id} product={res} cartDetails={cartDetails} />
+                        <Product key={res.id} product={res} />
                     )
                 })}
             </div>

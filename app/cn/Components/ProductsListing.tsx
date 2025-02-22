@@ -12,8 +12,6 @@ const ProductsListing = () => {
     const [currentSubcategory, setCurrentSubcategory] = useState<BasicDetails>();
     const [products, setProducts] = useState<ProductType[]>([]);
     const [selectedTab, setSelectedTab] = useState('');
-    const [userId, setUserId] = useState(null);
-    const [cartDetails, setCartDetails] = useState([]);
     const params = useSearchParams();
     const categoryId = params?.get('categoryId');
 
@@ -79,28 +77,7 @@ const ProductsListing = () => {
         }
         setLoading(false);
     }
-
-    function getUserId(){
-        const storedUser = sessionStorage.getItem('user');
-        if (storedUser) {
-          setUserId(JSON.parse(storedUser));
-        }
-    }
-
-    const fetchCartDetails = async () => {
-        if(userId){
-            const response = await fetch('/api/cartdetails', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id: userId}),
-            });
-            const data = await response.json();
-            setCartDetails(data);
-        }
-    }
-    
+   
     useEffect(() => {
         fetchData();
     }, [categoryId]);
@@ -109,13 +86,7 @@ const ProductsListing = () => {
         fetchProducts();
     }, [selectedTab])
 
-    useEffect(() => {
-        fetchCartDetails();
-    }, [userId]);
 
-    useEffect(() => {
-        getUserId();   
-    }, [])
 
     const displayedCategories = category.slice(0, 7);
   return (
@@ -169,7 +140,7 @@ const ProductsListing = () => {
             <div className='flex h-full overflow-x-hidden flex-wrap bg-right-product-bg'>
                 {products.map((res)=> {
                     return (
-                        <Product key={res.id} product={res} cartDetails={cartDetails}/>
+                        <Product key={res.id} product={res} />
                     )
                 })}
             </div>

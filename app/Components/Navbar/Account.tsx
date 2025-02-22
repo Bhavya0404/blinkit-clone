@@ -1,14 +1,16 @@
 import React from 'react'
+import { setUser } from '@/lib/redux/features/user/userSlice';
+import { useAppDispatch } from '@/lib/redux/hook';
 
 interface AccountProps {
   userState: (user: any) => void;
 }
 
 const Account = ({userState}: AccountProps) => {
+  const dispatch = useAppDispatch();
+    
   const handleLogout = () => {
-    // Clear user authentication data
-    sessionStorage.removeItem('user'); 
-    userState(null);
+    dispatch(setUser(null));
   };
   return (
     <div>

@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/database/redis.js", "pages/api/getClosestStore.js", "lib/redis/index.js", "lib/redis/index.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/database/redis.js", "pages/api/getClosestStore.js", "lib/redis/index.js", "lib/redis/index.js", "lib/redux/store.ts"],
   "exclude": ["node_modules"]
 }
