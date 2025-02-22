@@ -5,15 +5,9 @@ import Carousel from './Carousel';
 import { ProductType } from '@/app/types/interfaces';
 import { useSearchParams } from 'next/navigation';
 import AddToCart from './AddToCart';
-import { useAppDispatch } from '@/lib/redux/hook';
-import { useAppSelector } from '@/lib/redux/hook';
-import { getUser } from '@/lib/redux/features/user/userSlice';
 
 const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
-    const [cartDetails, setCartDetails] = useState([]);
-    const dispatch = useAppDispatch()
-    const userId = useAppSelector(state => state.user.userId)
     const params = useSearchParams();
     const productId = params?.get('productId');
 
@@ -34,28 +28,9 @@ const ProductsPage = () => {
         }
         
     }
-
-    const fetchCartDetails = async () => {
-        if(userId){
-            const response = await fetch('/api/cartdetails', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id: userId}),
-            });
-            const data = await response.json();
-            setCartDetails(data);
-        }
-    }
-
-    useEffect(() => {
-        fetchCartDetails();
-    }, [userId]);
     
     useEffect(() => {
         fetchProductDetails();
-        dispatch(getUser()); 
     }, [])
   return (
     <div className='w-9/12 m-auto mb-10 flex align-middle overflow-hidden'>
@@ -130,7 +105,7 @@ const ProductsPage = () => {
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>
                 <div className='pt-3'>
-                    <AddToCart productId={productId || ''} cartInfo={cartDetails}/>
+                    <AddToCart productId={productId || ''} />
                 </div>
             </div>
 

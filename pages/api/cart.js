@@ -2,12 +2,12 @@ const {addToCart, removeFromCart, getCart} = require('../../lib/cartservice');
 const {publisher} = require('../../lib/redisPubSub');
 export default async function cart (req, res) {
     try {
-        const {userId, storeId, productId, addProduct} = req.body;
+        const {userId, storeId, productId, addProduct, removeProduct} = req.body;
         
         let result;
         if (addProduct) {
             result = await addToCart(userId, storeId, productId);
-        } else {
+        } else if (removeProduct) {
             result = await removeFromCart(userId, storeId, productId);
         }
 
@@ -21,9 +21,7 @@ export default async function cart (req, res) {
             }
         });
 
-        await publisher.publish(`cart-updates:${userId}`, JSON.stringify({totalQuantity, productDetails}));
-
-        res.status(200).json({result, totalQuantity, productDetails});
+        res.status(200).json({totalQuantity, productDetails});
 
     } catch (error) {
         res.status(500).json({error: error.message});

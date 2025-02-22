@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import AddToCart from './AddToCart';
 
 
-const Product = ({ product, cartDetails }: {product: ProductType, cartDetails: any}) => {
+const Product = ({ product }: {product: ProductType}) => {
     const router = useRouter();
   return (
     <div className="items-center w-[180px] pb-3 border shadow-card-box-shadow shadow bg-card-bg rounded-lg m-3" onClick={ () => router.push(`/product?productId=${product.id}`) }>
@@ -32,7 +32,7 @@ const Product = ({ product, cartDetails }: {product: ProductType, cartDetails: a
 
                 <div className='h-8 flex justify-between items-center'>
                     <p className='font-bold w-8 h-6'>₹{Number(product.price)}</p>
-                    <AddToCart productId={product.id} cartInfo={cartDetails}/>
+                    <AddToCart productId={product.id} />
                 </div>
             </div>
         </div>

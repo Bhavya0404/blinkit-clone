@@ -4,57 +4,21 @@ import CartProducts from './CartProducts';
 import { useAppSelector } from '@/lib/redux/hook';
 import { useAppDispatch } from '@/lib/redux/hook';
 import { getUser } from '@/lib/redux/features/user/userSlice';
+import { fetchCartDetails } from '@/lib/redux/features/user/cartDetailsSlice';
 const Cart = () => {
-  const [totalQuantity, setTotalQuantity] = useState(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [cartDetails, setCartDetails] = useState([]);
-  const [itemTotal, setItemTotal] = useState(0);
+
   const dispatch = useAppDispatch()
   const userId = useAppSelector(state => state.user.userId)
 
-  const fetchCartDetails = async () => {
-    if(userId){
-        const response = await fetch('/api/cartdetails', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({id: userId}),
-        });
-        const data = await response.json();
-        const totalQuantity = data.cart.reduce((sum: number, curr: any) => sum + curr.quantity, 0); // sum = 0, curr maps to each element in the array
-        // setTotalQuantity(totalQuantity);
-        // setCartDetails(data);
-    }
-  }
+  const cartDetails = useAppSelector(state => state.cartDetails.productDetails)
+  const totalQuantity = useAppSelector(state => state.cartDetails.totalQuantity)
+  const itemTotal = useAppSelector(state => state.cartDetails.itemsPrice)
 
-  const fetchRealtimeCartDetails = async () => {
-    const eventSource = new EventSource(`/api/cart-updates?userId=${userId}`);  
-
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("data", data);
-      const itemsPrice = data.sseData.productDetails?.reduce(
-        (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0);
-        
-      setItemTotal(itemsPrice);
-      setTotalQuantity(Number(data.sseData.totalQuantity));
-      setCartDetails(data.sseData.productDetails);
-    };
-
-    eventSource.onerror = (error) => {
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }
 
   useEffect(() => {
     if (userId) {
-      fetchCartDetails();
-      fetchRealtimeCartDetails();  
+      dispatch(fetchCartDetails({userId: userId}));
     }
   }, [userId]);
 

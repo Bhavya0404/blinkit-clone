@@ -2,17 +2,10 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Product from '../../product/Components/Product';
 import { ProductType } from '@/app/types/interfaces';
-import { getUser } from '@/lib/redux/features/user/userSlice';
-import { useAppDispatch } from '@/lib/redux/hook';
-import { useAppSelector } from '@/lib/redux/hook';
-
 
 const ProductCarousel = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [cartDetails, setCartDetails] = useState([]);
-    const dispatch = useAppDispatch()
-    const userId = useAppSelector(state => state.user.userId)
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     
@@ -57,28 +50,11 @@ const ProductCarousel = () => {
         });
     };
 
-    const fetchCartDetails = async () => {
-        if(userId){
-            const response = await fetch('/api/cartdetails', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id: userId}),
-            });
-            const data = await response.json();
-            setCartDetails(data);
-        }
-    }
 
     useEffect(() => {
         fetchProducts();
-        dispatch(getUser());   
     }, [])
 
-    useEffect(() => {
-        fetchCartDetails();
-    }, [userId]);
 
     const productsData = products.slice(0, 10);
   return (
@@ -92,7 +68,7 @@ const ProductCarousel = () => {
             <div ref={scrollContainerRef}className="flex overflow-x-scroll scrollbar-hidden mx-auto px-8 lg:overflow-x-hidden scroll-smooth">
                 {productsData.map((res)=> {
                     return (
-                        <Product key={res.id} product={res} cartDetails={cartDetails} />
+                        <Product key={res.id} product={res} />
                     )
                 })}
             </div>

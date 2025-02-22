@@ -68,7 +68,7 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
                             </div>
                         </div>
                         <div className='mr-4 self-center'>
-                            <AddToCart productId={res.productId} cartInfo={{cart: cartDetails}}/>
+                            <AddToCart productId={res.productId} />
                         </div>
                     </div>
                 ))}

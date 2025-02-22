@@ -1,9 +1,6 @@
 "use client"
 import Product from '@/app/product/Components/Product';
 import { BasicDetails, Category, ProductType } from '@/app/types/interfaces';
-import { getUser } from '@/lib/redux/features/user/userSlice';
-import { useAppSelector } from '@/lib/redux/hook';
-import { useAppDispatch } from '@/lib/redux/hook';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -15,9 +12,6 @@ const ProductsListing = () => {
     const [currentSubcategory, setCurrentSubcategory] = useState<BasicDetails>();
     const [products, setProducts] = useState<ProductType[]>([]);
     const [selectedTab, setSelectedTab] = useState('');
-    const [cartDetails, setCartDetails] = useState([]);
-    const dispatch = useAppDispatch()
-    const userId = useAppSelector(state => state.user.userId)
     const params = useSearchParams();
     const categoryId = params?.get('categoryId');
 
@@ -83,22 +77,7 @@ const ProductsListing = () => {
         }
         setLoading(false);
     }
-
-
-    const fetchCartDetails = async () => {
-        if(userId){
-            const response = await fetch('/api/cartdetails', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id: userId}),
-            });
-            const data = await response.json();
-            setCartDetails(data);
-        }
-    }
-    
+   
     useEffect(() => {
         fetchData();
     }, [categoryId]);
@@ -107,13 +86,7 @@ const ProductsListing = () => {
         fetchProducts();
     }, [selectedTab])
 
-    useEffect(() => {
-        fetchCartDetails();
-    }, [userId]);
 
-    useEffect(() => {
-        dispatch(getUser());   
-    }, [])
 
     const displayedCategories = category.slice(0, 7);
   return (
@@ -167,7 +140,7 @@ const ProductsListing = () => {
             <div className='flex h-full overflow-x-hidden flex-wrap bg-right-product-bg'>
                 {products.map((res)=> {
                     return (
-                        <Product key={res.id} product={res} cartDetails={cartDetails}/>
+                        <Product key={res.id} product={res} />
                     )
                 })}
             </div>
