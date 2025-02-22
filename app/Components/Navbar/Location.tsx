@@ -7,12 +7,18 @@ const Location = () => {
   const [isClient, setIsClient] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [location, setLocation] = useState('');
-  const [timeToDeliver, setTimeToDeliver] = useState(10);
+  const [timeToDeliver, setTimeToDeliver] = useState('');
 
   let cordinates: any;
 
 
   useEffect(() => {
+    const coordinates = sessionStorage.getItem('coordinates');
+    if(coordinates){
+      const [lat, lng] = coordinates.split(',');
+      convertCordinatesToPlaceName(parseFloat(lat), parseFloat(lng));
+      getClosestStore(parseFloat(lat), parseFloat(lng));
+    }
     setIsClient(true);
   }, [location]);
 
@@ -28,10 +34,11 @@ const Location = () => {
 
   const detectLocationGPS = () => {
     navigator.geolocation.getCurrentPosition((loc) => {
-      const lat = loc.coords.longitude;
-      const lng = loc.coords.latitude;
+      const lat = loc.coords.latitude;
+      const lng = loc.coords.longitude;
       convertCordinatesToPlaceName(lat, lng);
       getClosestStore(lat, lng);
+      setIsClient(false);
 
     }, (err) => {
       console.log("Error in geolocation", err);
@@ -39,23 +46,27 @@ const Location = () => {
   }
 
   const convertCordinatesToPlaceName = async (lat:number, lng: number) => {
-    const data = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lat},${lng}.json?types=address&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
+    const data = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?types=address&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
     const res = await data.json();
     const loc = res.features[0].place_name;
     setLocation(loc);
   }
   
   const getClosestStore = async (lat: number, lng: number) => {
+    sessionStorage.removeItem('coordinates');
+    sessionStorage.removeItem('store');
+    sessionStorage.setItem('coordinates', `${lat},${lng}`);
     const res = await fetch('/api/getClosestStore', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ lat:28.6388 , lng: 77.0871 }), // Send lat and lng in the request body
+      body: JSON.stringify({ lat:lat , lng: lng }), // Send lat and lng in the request body
     })
     if(res.ok){
       const data = await res.json();
-      getTimeToDelivery(data.latitude, data.longitude, 28.6388, 77.0871);
+      sessionStorage.setItem('store', data.store_id);
+      getTimeToDelivery(data.latitude, data.longitude, lat, lng);
       console.log(data);
     } else{
       throw new Error('Error fetching closest store to user');
@@ -66,14 +77,17 @@ const Location = () => {
     const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${storeLng},${storeLat};${userLng},${userLat}?language=en&overview=full&steps=true&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
     const res = await data.json();
     const duration = Math.ceil(res.routes[0].duration / 60);
-    setTimeToDeliver(duration);
+    setTimeToDeliver(duration.toString()); 
   }
 
   const retrieveVal = (res:any) => {
     cordinates = res.features[0].properties.coordinates;
     const loc = res.features[0].properties.full_address;
+    console.log("cordinates", cordinates);
+    console.log("loc", loc);
     setLocation(loc);
     getClosestStore(cordinates.latitude, cordinates.longitude);
+    setIsClient(false);
   } 
   
 

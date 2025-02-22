@@ -8,8 +8,7 @@ const CACHE_KEY = 'cached:products';
 const CACHE_TTL = 3600;
 
 export default async function getProducts(req, res) {
-  const { subCategoryId } = req.body;
-  const storeId = 3;
+  const { subCategoryId, storeId } = req.body;
     try {
         // const cachedProducts = await redis.get(CACHE_KEY);
         // if (cachedProducts) {

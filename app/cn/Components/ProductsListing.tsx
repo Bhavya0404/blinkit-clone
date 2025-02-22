@@ -59,7 +59,7 @@ const ProductsListing = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ subCategoryId: selectedTab })
+            body: JSON.stringify({ subCategoryId: selectedTab, storeId: parseInt(sessionStorage.getItem('store') || '') })
         })
 
         if(productRes.ok){

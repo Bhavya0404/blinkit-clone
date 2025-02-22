@@ -14,7 +14,8 @@ const initialState: cartDetailsState = {
 }
 
 export const fetchCartDetails = createAsyncThunk('cartDetails/fetchCartDetails', async (
-    {userId, productId, storeId = 3, addProduct = false, removeProduct = false}: {userId: string, productId?: string, storeId?: number, addProduct?: boolean, removeProduct?: boolean}) => {
+    {userId, productId, addProduct = false, removeProduct = false}: {userId: string, productId?: string, addProduct?: boolean, removeProduct?: boolean}) => {
+        const storeId = parseInt(sessionStorage.getItem('store')  || '');
     try {
         if(userId){
             const response = await fetch('/api/cart', {
