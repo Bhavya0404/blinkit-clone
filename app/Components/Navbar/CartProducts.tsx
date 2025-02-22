@@ -2,7 +2,6 @@ import AddToCart from '@/app/product/Components/AddToCart';
 import { ProductType } from '@/app/types/interfaces';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
-
 const CartProducts = ({cartDetails}: {cartDetails: any}) => {
 
     const [productsDetails, setProductsDetails] = useState<ProductType[]>();
@@ -10,7 +9,7 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
     const [deliveryCharge, setDeliveryCharge] = useState(30);
     const [handlingCharge, setHandlingCharge] = useState(9);
     const [grandTotal, setGrandTotal] = useState(0);
-
+    
     const fetchProductDetails = async () => {
         const productId = cartDetails.map((res: any) => res.productId);
         const res = await fetch('/api/productdetails', {
@@ -39,11 +38,8 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
     }
 
     useEffect(() => {
-        fetchProductDetails();
-    }, [])
-
-    useEffect(() => {
         BillDetails();
+        fetchProductDetails();
     }, [cartDetails])
 
     return (
