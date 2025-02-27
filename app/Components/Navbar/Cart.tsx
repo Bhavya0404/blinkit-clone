@@ -44,7 +44,7 @@ const Cart = () => {
           {totalQuantity ?  
           <div className='flex flex-col'>
             <p>{totalQuantity} items</p> 
-            <p className='self-start'>₹{itemTotal}</p>
+            <p className='self-start'>₹{Math.round(Number(itemTotal))}</p>
           </div>
           : <p>My Cart</p>
           }

@@ -77,6 +77,7 @@ const Location = () => {
     const data = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${storeLng},${storeLat};${userLng},${userLat}?language=en&overview=full&steps=true&access_token=${process.env.NEXT_PUBLIC_MAP_API_KEY}`)
     const res = await data.json();
     const duration = Math.ceil(res.routes[0].duration / 60);
+    sessionStorage.setItem('timeToDeliver', duration.toString());
     setTimeToDeliver(duration.toString()); 
   }
 

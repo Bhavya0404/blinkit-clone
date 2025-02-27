@@ -7,7 +7,7 @@ const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuan
 
     const [productsDetails, setProductsDetails] = useState<ProductType[]>();
     const [itemTotal, setItemTotal] = useState(0);
-    const [deliveryCharge, setDeliveryCharge] = useState(30);
+    const [deliveryCharge, setDeliveryCharge] = useState(0);
     const [handlingCharge, setHandlingCharge] = useState(9);
     const [grandTotal, setGrandTotal] = useState(0);
     const user = useAppSelector(state => state.user);
@@ -33,11 +33,24 @@ const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuan
     }
     const BillDetails = async () => {
         const itemsPrice = cartDetails?.reduce(
-            (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0);
+            (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0).toFixed(2);
           
         console.log("Total Price:", itemsPrice);
         setItemTotal(itemsPrice);
-        setGrandTotal(itemsPrice + deliveryCharge + handlingCharge);
+        let otherCharges = 0;
+        if(!cartDetails.length){
+            otherCharges = 0;
+            setHandlingCharge(0);
+        } else {
+            otherCharges += handlingCharge;
+            if(itemsPrice < 200){
+                const deliverCharges = (itemsPrice*10)/100
+                setDeliveryCharge(deliverCharges);
+                otherCharges += deliverCharges; // delivery charge
+            }
+        }
+        const total = (Number(itemsPrice) + Number(otherCharges)).toFixed(2);
+        setGrandTotal(Math.round(Number(total)));
     }
 
     const placeOrder = async () => {

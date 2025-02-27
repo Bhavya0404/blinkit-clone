@@ -33,9 +33,9 @@ const LandingPage = () => {
         </div>
 
         <div className='w-[1280px] md:w-full lg:w-[1280px] mb-7'>
-            <ProductCarousel />
-            <ProductCarousel />
-            <ProductCarousel />
+            <ProductCarousel title={'Dairy, Bread & Eggs'} subcategory={'d0e6c978-e5ee-49a7-8b8e-577af537ae57'}/>
+            <ProductCarousel title={'Masala, Oil & More'} subcategory={'be8619c6-9385-41bb-a308-98fe86cb8b00'}/>
+            <ProductCarousel title={'Atta, Rice & Dal'} subcategory={'c5a39073-350f-4724-9fe5-68dec43f1b57'}/>
         </div>
     </div>
   )

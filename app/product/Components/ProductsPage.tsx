@@ -10,6 +10,7 @@ const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
     const params = useSearchParams();
     const productId = params?.get('productId');
+    const timeToDeliver = sessionStorage?.getItem('timeToDeliver');
 
     let unit = '';
     if(Number(productsDetails?.weight_units) === 1){
@@ -103,7 +104,7 @@ const ProductsPage = () => {
                         <Image src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=90/assets/eta-icons/15-mins.png"
                             alt="Shoes" width={14} height={14} /> 
                     </div>
-                    <p className='text font-semibold'>13 mins</p>
+                    <p className='text font-semibold'>{timeToDeliver} mins</p>
                 </div>
 
                 <p className='text-green-600 text-lg font-medium mt-3'>View all by {productsDetails?.company}</p>

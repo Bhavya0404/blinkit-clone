@@ -23,6 +23,7 @@ const ProductsListing = () => {
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             const [categoryRes, subcategoryRes] = await Promise.all([
                 fetch('/api/category'),
                 fetch(`/api/subcategory`, {
@@ -48,12 +49,11 @@ const ProductsListing = () => {
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 100);
         }
     };
 
     const fetchProducts = async () => {
-        setLoading(true);
         const productRes = await fetch('/api/getproducts', {
             method: 'POST',
             headers: {
@@ -71,11 +71,11 @@ const ProductsListing = () => {
                     additional_attributes: JSON.parse(res.additional_attributes)
                 };
             });
+            
             setProducts(parsedProductsdata);
         } else {
             throw new Error('Error fetching products');
         }
-        setLoading(false);
     }
    
     useEffect(() => {
