@@ -70,7 +70,7 @@ const Cart = () => {
             ></label>
 
             <ul className="menu bg-right-product-bg text-base-content min-h-full w-96 ">
-              <CartProducts cartDetails={cartDetails} />
+              <CartProducts cartDetails={cartDetails} totalQuantity={totalQuantity}/>
             </ul>
           </div>
         </div>

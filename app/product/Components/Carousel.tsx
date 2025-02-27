@@ -1,8 +1,9 @@
 "use client"
 import React, { useRef } from 'react'
 import Image from 'next/image';
+import { ProductType } from '@/app/types/interfaces';
 
-const Carousel = () => {
+const Carousel = ({productsDetails}: {productsDetails: ProductType | undefined}) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const scroll = (direction: 'left' | 'right') => {
         const container = scrollContainerRef.current;

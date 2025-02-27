@@ -11,6 +11,17 @@ const ProductsPage = () => {
     const params = useSearchParams();
     const productId = params?.get('productId');
 
+    let unit = '';
+    if(Number(productsDetails?.weight_units) === 1){
+        unit = 'ml';
+    } else if (Number(productsDetails?.weight_units) === 2){
+        unit = 'L';
+    } else if (Number(productsDetails?.weight_units) === 3) {
+        unit = 'g';
+    } else {
+        unit = 'kg';
+    }
+
     const fetchProductDetails = async () => {
         const res = await fetch('/api/productdetails', {
             method: 'POST',
@@ -41,7 +52,7 @@ const ProductsPage = () => {
                         <Image src={productsDetails?.image_url || ''} loading='lazy' width={460} height={400} alt={"Name"}/>
                     </div>
                     <div>
-                        <Carousel />
+                        <Carousel productsDetails={productsDetails} />
                     </div>
                 </div>
 
@@ -100,7 +111,7 @@ const ProductsPage = () => {
 
             <div className='flex justify-between pt-3'>
                 <div className='pt-3'>
-                    <p className='text-gray-500 font-medium text-sm'>{productsDetails?.weight} ml</p>
+                    <p className='text-gray-500 font-medium text-sm'>{productsDetails?.weight} {unit}</p>
                     <p className='text-gray-500 font-medium text-base'>MRP <span className='font-semibold text-black'>₹{productsDetails?.price}</span></p>
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>

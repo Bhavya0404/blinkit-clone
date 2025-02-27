@@ -1,14 +1,17 @@
 import AddToCart from '@/app/product/Components/AddToCart';
 import { ProductType } from '@/app/types/interfaces';
+import { useAppSelector } from '@/lib/redux/hook';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
-const CartProducts = ({cartDetails}: {cartDetails: any}) => {
+const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuantity: number}) => {
 
     const [productsDetails, setProductsDetails] = useState<ProductType[]>();
     const [itemTotal, setItemTotal] = useState(0);
     const [deliveryCharge, setDeliveryCharge] = useState(30);
     const [handlingCharge, setHandlingCharge] = useState(9);
     const [grandTotal, setGrandTotal] = useState(0);
+    const user = useAppSelector(state => state.user);
+    const storeId = sessionStorage.getItem('store')
     
     const fetchProductDetails = async () => {
         const productId = cartDetails.map((res: any) => res.productId);
@@ -35,6 +38,24 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
         console.log("Total Price:", itemsPrice);
         setItemTotal(itemsPrice);
         setGrandTotal(itemsPrice + deliveryCharge + handlingCharge);
+    }
+
+    const placeOrder = async () => {
+        try {
+            const res = await fetch('/api/placeorder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({userId: user, orderDetails: cartDetails, grandTotal: grandTotal, totalQuantity: totalQuantity, storeId: storeId})
+            })
+            if(res.ok){
+                const data = await res.json();
+                console.log("order placed", data);
+            }
+        } catch (error){
+            console.log("error Placing order")
+        }
     }
 
     useEffect(() => {
@@ -151,7 +172,7 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
                     <p className='text-green-700'>Change</p>   
                 </div>
                 <div className='mt-3'>
-                    <button className='bg-green-700 text-white px-3 py-2 rounded-md w-full'>
+                    <button className='bg-green-700 text-white px-3 py-2 rounded-md w-full' onClick={placeOrder}>
                         <div className='flex justify-between w-full'>
                             <div>
                                 <p className='font-bold text-left'>₹{grandTotal}</p>

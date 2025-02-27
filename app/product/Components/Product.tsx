@@ -7,6 +7,16 @@ import AddToCart from './AddToCart';
 
 const Product = ({ product }: {product: ProductType}) => {
     const router = useRouter();
+    let unit = '';
+    if(Number(product.weight_units) === 1){
+        unit = 'ml';
+    } else if (Number(product.weight_units) === 2){
+        unit = 'L';
+    } else if (Number(product.weight_units) === 3) {
+        unit = 'g';
+    } else {
+        unit = 'kg';
+    }
   return (
     <div className="items-center w-[180px] pb-3 border shadow-card-box-shadow shadow bg-card-bg rounded-lg m-3" onClick={ () => router.push(`/product?productId=${product.id}`) }>
         <div className='flex justify-center'>
@@ -27,7 +37,7 @@ const Product = ({ product }: {product: ProductType}) => {
             <div className='w-40 h-2'>
                 <div className='flex flex-col'>
                     <p className='font-semibold text-sm h-9 mb-1.5'>{product.name}</p>
-                    <p className='h-3 mb-5 text-weight-unit-text text-sm'>{Number(product.weight)} g</p>
+                    <p className='h-3 mb-5 text-weight-unit-text text-sm'>{Number(product.weight)} {unit}</p>
                 </div>
 
                 <div className='h-8 flex justify-between items-center'>
