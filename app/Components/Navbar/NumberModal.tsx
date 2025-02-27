@@ -14,8 +14,10 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
   const [userOTP, setuserOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
   const [isOtpScreen, setisOtpScreen] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const validateNumber = async () => {
+    setLoading(true);
     const num = parseInt(number);
 
       const res = await fetch(`/api/auth/send_sms`);
@@ -23,7 +25,9 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
         const authData = await res.json();
         setGeneratedOTP(authData.otp);
         setisOtpScreen(true);
+        setLoading(false);
       } else {
+        setLoading(false);
         throw new Error("Error recieving OTP");
       }
   }
@@ -46,6 +50,7 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
   };
 
   const validateOTP = async () => {
+    setLoading(true);
     if(parseInt(userOTP) === parseInt(generatedOTP)){
 
       try {
@@ -64,6 +69,7 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
               setUser(authData.user.user_id);
               resetInput();
             }
+            setLoading(false);
           } else {
             console.error("Error in Auth");
           }
@@ -73,9 +79,11 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
         
       } catch (error) {
         console.error("Error in verifying user", error);
+        setLoading(false);
       }
     } else {
       console.log("OTP is incorrect");
+      setLoading(false);
     }
   }
 
@@ -93,6 +101,9 @@ const NumberModal = ({isOpen, onClose, user, setUser}: NumberModalProps) => {
 
   return (
     <dialog id="login_modal" className="modal" open={isOpen}>
+      {isLoading && <div className="fixed inset-0 flex justify-center items-center">
+             <span className="loading loading-spinner loading-lg text-warning"></span>
+        </div>}
           {!isOtpScreen ? 
             <div className="modal-box h-80">
               <form method="dialog">

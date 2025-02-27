@@ -10,6 +10,18 @@ const ProductsPage = () => {
     const [productsDetails, setProductsDetails] = useState<ProductType>();
     const params = useSearchParams();
     const productId = params?.get('productId');
+    const timeToDeliver = sessionStorage?.getItem('timeToDeliver');
+
+    let unit = '';
+    if(Number(productsDetails?.weight_units) === 1){
+        unit = 'ml';
+    } else if (Number(productsDetails?.weight_units) === 2){
+        unit = 'L';
+    } else if (Number(productsDetails?.weight_units) === 3) {
+        unit = 'g';
+    } else {
+        unit = 'kg';
+    }
 
     const fetchProductDetails = async () => {
         const res = await fetch('/api/productdetails', {
@@ -41,7 +53,7 @@ const ProductsPage = () => {
                         <Image src={productsDetails?.image_url || ''} loading='lazy' width={460} height={400} alt={"Name"}/>
                     </div>
                     <div>
-                        <Carousel />
+                        <Carousel productsDetails={productsDetails} />
                     </div>
                 </div>
 
@@ -92,7 +104,7 @@ const ProductsPage = () => {
                         <Image src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=90/assets/eta-icons/15-mins.png"
                             alt="Shoes" width={14} height={14} /> 
                     </div>
-                    <p className='text font-semibold'>13 mins</p>
+                    <p className='text font-semibold'>{timeToDeliver} mins</p>
                 </div>
 
                 <p className='text-green-600 text-lg font-medium mt-3'>View all by {productsDetails?.company}</p>
@@ -100,7 +112,7 @@ const ProductsPage = () => {
 
             <div className='flex justify-between pt-3'>
                 <div className='pt-3'>
-                    <p className='text-gray-500 font-medium text-sm'>{productsDetails?.weight} ml</p>
+                    <p className='text-gray-500 font-medium text-sm'>{productsDetails?.weight} {unit}</p>
                     <p className='text-gray-500 font-medium text-base'>MRP <span className='font-semibold text-black'>₹{productsDetails?.price}</span></p>
                     <p className='text-gray-400 font-medium text-xs'>(inclusive of all taxes)</p>
                 </div>

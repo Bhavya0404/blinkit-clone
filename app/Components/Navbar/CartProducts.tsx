@@ -1,14 +1,17 @@
 import AddToCart from '@/app/product/Components/AddToCart';
 import { ProductType } from '@/app/types/interfaces';
+import { useAppSelector } from '@/lib/redux/hook';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
-const CartProducts = ({cartDetails}: {cartDetails: any}) => {
+const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuantity: number}) => {
 
     const [productsDetails, setProductsDetails] = useState<ProductType[]>();
     const [itemTotal, setItemTotal] = useState(0);
-    const [deliveryCharge, setDeliveryCharge] = useState(30);
+    const [deliveryCharge, setDeliveryCharge] = useState(0);
     const [handlingCharge, setHandlingCharge] = useState(9);
     const [grandTotal, setGrandTotal] = useState(0);
+    const user = useAppSelector(state => state.user);
+    const storeId = sessionStorage.getItem('store')
     
     const fetchProductDetails = async () => {
         const productId = cartDetails.map((res: any) => res.productId);
@@ -30,11 +33,42 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
     }
     const BillDetails = async () => {
         const itemsPrice = cartDetails?.reduce(
-            (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0);
+            (acc: number, res: any) => acc + Number(res.price) * Number(res.quantity), 0).toFixed(2);
           
         console.log("Total Price:", itemsPrice);
         setItemTotal(itemsPrice);
-        setGrandTotal(itemsPrice + deliveryCharge + handlingCharge);
+        let otherCharges = 0;
+        if(!cartDetails.length){
+            otherCharges = 0;
+            setHandlingCharge(0);
+        } else {
+            otherCharges += handlingCharge;
+            if(itemsPrice < 200){
+                const deliverCharges = (itemsPrice*10)/100
+                setDeliveryCharge(deliverCharges);
+                otherCharges += deliverCharges; // delivery charge
+            }
+        }
+        const total = (Number(itemsPrice) + Number(otherCharges)).toFixed(2);
+        setGrandTotal(Math.round(Number(total)));
+    }
+
+    const placeOrder = async () => {
+        try {
+            const res = await fetch('/api/placeorder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({userId: user, orderDetails: cartDetails, grandTotal: grandTotal, totalQuantity: totalQuantity, storeId: storeId})
+            })
+            if(res.ok){
+                const data = await res.json();
+                console.log("order placed", data);
+            }
+        } catch (error){
+            console.log("error Placing order")
+        }
     }
 
     useEffect(() => {
@@ -151,7 +185,7 @@ const CartProducts = ({cartDetails}: {cartDetails: any}) => {
                     <p className='text-green-700'>Change</p>   
                 </div>
                 <div className='mt-3'>
-                    <button className='bg-green-700 text-white px-3 py-2 rounded-md w-full'>
+                    <button className='bg-green-700 text-white px-3 py-2 rounded-md w-full' onClick={placeOrder}>
                         <div className='flex justify-between w-full'>
                             <div>
                                 <p className='font-bold text-left'>₹{grandTotal}</p>

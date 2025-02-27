@@ -14,6 +14,7 @@ export interface ProductType extends BasicDetails, Category {
     price: string;
     discounted_price: string;
     weight: string;
+    weight_units: string;
     subcategory_id: string;
     company: string;
     additional_attributes: {

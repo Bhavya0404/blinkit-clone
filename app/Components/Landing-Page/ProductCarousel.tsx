@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import Product from '../../product/Components/Product';
 import { ProductType } from '@/app/types/interfaces';
 
-const ProductCarousel = () => {
+const ProductCarousel = ({title, subcategory}: {title: string, subcategory: string}) => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -16,7 +16,7 @@ const ProductCarousel = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ subCategoryId: 'd0e6c978-e5ee-49a7-8b8e-577af537ae57', storeId: parseInt(sessionStorage.getItem('store') || '') })
+            body: JSON.stringify({ subCategoryId: subcategory, storeId: parseInt(sessionStorage.getItem('store') || '') })
         })
 
         if(productRes.ok){
@@ -61,7 +61,7 @@ const ProductCarousel = () => {
    <div>
     {!isLoading && <div>
         <div className='flex justify-between mx-2 mt-4 mb-2'>
-            <p className='font-bold text-2xl'>Dairy, Bread & Eggs</p>
+            <p className='font-bold text-2xl'>{title}</p>
             <p ><a href="#" className='text-green-700 font-medium text-xl'>see all</a></p>
         </div>
         <div className="lg:relative">

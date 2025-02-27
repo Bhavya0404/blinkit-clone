@@ -19,6 +19,7 @@ const productDetails  = async (req, res) => {
                     name: result[1].name,
                     price: result[1].price,
                     image_url: result[1].image_url,
+                    secondary_images: result[1].secondary_images,
                     weight: result[1].weight,
                 }
             })
