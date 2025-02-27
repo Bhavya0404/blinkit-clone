@@ -1,4 +1,4 @@
-
+const  { updateRedisStoreInventory } =  require('../../lib/cartservice');
 const pool = require('../../app/database/postgres');
 const redis = require('../../app/database/redis');
 
@@ -16,11 +16,12 @@ export default async function placeOrder(req, res) {
                     set current_quantity = current_quantity - $1
                     where product_id = $2 and store_id = $3;
                 `
-                console.log(item);
+                
                 await pool.query(updateSqlQuery, [item.quantity, item.productId, storeId])
             }
 
             await redis.del( `cart:${userId.userId}`);
+            updateRedisStoreInventory(storeId, orderDetails);
         }
         res.status(200).json(result.rows[0]);
     } catch (error){
