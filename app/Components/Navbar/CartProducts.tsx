@@ -12,6 +12,9 @@ const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuan
     const [grandTotal, setGrandTotal] = useState(0);
     const user = useAppSelector(state => state.user);
     const storeId = sessionStorage.getItem('store')
+    const [showInfoToast, setShowInfoToast] = useState(false);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
     
     const fetchProductDetails = async () => {
         const productId = cartDetails.map((res: any) => res.productId);
@@ -64,12 +67,28 @@ const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuan
             })
             if(res.ok){
                 const data = await res.json();
+                setToastMessage('Order placed successfully!');
+                setShowSuccessToast(true);
+                
+                setTimeout(() => {
+                    setShowSuccessToast(false);
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 300);
+                }, 2000);
                 console.log("order placed", data);
             }
         } catch (error){
-            console.log("error Placing order")
+            setToastMessage('Failed to place order');
+            setShowInfoToast(true);
+            console.log("error Placing order");
+            
+            setTimeout(() => {
+                setShowInfoToast(false);
+            }, 3000);
         }
     }
+    
 
     useEffect(() => {
         BillDetails();
@@ -196,6 +215,20 @@ const CartProducts = ({cartDetails, totalQuantity}: {cartDetails: any, totalQuan
                     </button>
                 </div>
             </div>
+            {(showInfoToast || showSuccessToast) && (
+                <div className="toast toast-top toast-end">
+                    {showInfoToast && (
+                        <div className="alert alert-info border shadow-card-box-shadow shadow bg-card-bg rounded-xl">
+                            <span>{toastMessage}</span>
+                        </div>
+                    )}
+                    {showSuccessToast && (
+                        <div className="alert alert-success border shadow-card-box-shadow shadow bg-card-bg rounded-xl">
+                            <span>{toastMessage}</span>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
